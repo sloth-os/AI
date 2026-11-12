@@ -1,0 +1,50 @@
+.rec-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.rec-item {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  padding: 7px 10px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  background: var(--raise);
+  color: var(--ink-2);
+  font: 600 12.5px/1.25 var(--font-display);
+  cursor: pointer;
+  text-align: left;
+}
+.rec-item:hover {
+  background: var(--raise-2);
+  color: var(--ink);
+}
+.rec-item.on {
+  border-color: var(--accent);
+  color: var(--ink);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.rec-item .n {
+  font: 600 10px/1 var(--font-mono);
+  color: var(--accent);
+}
+.rec-table td:nth-child(3),
+.rec-table th:nth-child(3) {
+  text-align: right;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  color: var(--ink);
+}
+.rec-table td small {
+  display: block;
+  color: var(--ink-3);
+}
+.rec-table i.sw {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  margin-right: 7px;
+  background: var(--c);
+}
