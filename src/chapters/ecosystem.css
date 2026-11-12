@@ -1,0 +1,253 @@
+/* Project galaxy (#/ecosystem) */
+.eco-search {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.eco-search input {
+  flex: 1;
+  min-width: 0;
+}
+.eco-count {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 26px;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.eco-chips .chip {
+  cursor: pointer;
+  user-select: none;
+  min-height: 24px;
+}
+.eco-chips .chip small {
+  color: var(--ink-3);
+  font: 500 10px/1 var(--font-mono);
+}
+.eco-chips .chip.on {
+  background: color-mix(in srgb, var(--c) 36%, transparent);
+  border-color: var(--c);
+}
+.eco-chips.has-on .chip:not(.on) {
+  opacity: 0.6;
+}
+.eco-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c);
+  flex: none;
+}
+/* the three kinds are told apart by shape, the cluster by color */
+.eco-glyph {
+  --c: var(--ink-2);
+  display: inline-block;
+  box-sizing: border-box;
+  width: 10px;
+  height: 10px;
+  flex: none;
+  vertical-align: -1px;
+}
+.eco-glyph.open-source {
+  border-radius: 50%;
+  background: var(--c);
+}
+.eco-glyph.open-weights {
+  border-radius: 50%;
+  border: 2.5px solid var(--c);
+}
+.eco-glyph.closed {
+  background: var(--c);
+  transform: rotate(45deg) scale(0.8);
+  border-radius: 1px;
+}
+.eco-glyph.big {
+  width: 14px;
+  height: 14px;
+}
+.eco-glyph.big.open-weights {
+  border-width: 3.5px;
+}
+.seg .eco-glyph {
+  margin-right: 5px;
+}
+.eco-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.eco-row {
+  display: grid;
+  grid-template-columns: 20px 11px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 5px 8px 5px 4px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.eco-row:hover {
+  background: var(--raise);
+}
+.eco-row.on {
+  background: var(--raise);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+.eco-rank {
+  font: 500 10.5px/1 var(--font-mono);
+  color: var(--ink-3);
+  text-align: right;
+}
+.eco-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12.8px;
+  font-weight: 600;
+}
+.eco-name small {
+  margin-left: 7px;
+  color: var(--ink-3);
+  font-size: 11px;
+  font-weight: 450;
+}
+.eco-stars {
+  font: 600 11.3px/1 var(--font-mono);
+  color: var(--ink-2);
+}
+.eco-empty {
+  padding: 10px 4px;
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+
+/* detail card */
+.eco-card {
+  gap: 11px;
+}
+.eco-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.eco-head h2 {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font: 650 19px/1.2 var(--font-display);
+  overflow-wrap: anywhere;
+}
+.eco-one {
+  margin: 0;
+  font-size: 13.4px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.eco-card h4 {
+  margin: 4px 0 -4px;
+  font: 600 10px/1.2 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.eco-algo {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.eco-steps {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12.8px;
+  line-height: 1.4;
+  color: var(--ink-2);
+}
+.eco-steps li::marker {
+  font: 600 11px var(--font-mono);
+  color: var(--accent);
+}
+.eco-card a.chip,
+a.eco-link {
+  text-decoration: none;
+}
+.eco-card a.chip {
+  --c: var(--accent);
+}
+a.eco-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.eco-foot {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.eco-nav {
+  display: flex;
+  gap: 4px;
+  flex: none;
+  align-self: flex-start;
+}
+.eco-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.eco-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 12.6px;
+  line-height: 1.4;
+  color: var(--ink-2);
+}
+.eco-legend > div {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  gap: 8px;
+  align-items: baseline;
+}
+.eco-legend b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.eco-dock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.eco-hint {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+@media (max-width: 860px) {
+  .eco-hint {
+    display: none;
+  }
+}
+@media (pointer: coarse) {
+  .eco-row {
+    min-height: 40px;
+  }
+  .eco-chips .chip {
+    min-height: 30px;
+    padding: 5px 10px;
+  }
+}
