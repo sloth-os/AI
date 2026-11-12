@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>AI Atlas 3D · how AI works, in an immersive 3D lab</title>
+    <meta name="description" content="An immersive, interactive 3D atlas of how AI works: live neural networks, a real GPT dissected token by token, diffusion, reinforcement learning, data pipelines, deployment modes, measured performance and the ten hottest issues in AI." />
+    <meta name="theme-color" content="#05070d" />
+    <meta property="og:title" content="AI Atlas 3D" />
+    <meta property="og:description" content="How AI works, in an immersive 3D lab. Everything runs live in your browser." />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <canvas id="gl" tabindex="0" aria-label="Interactive 3D scene"></canvas>
+    <div id="labels"></div>
+    <div id="hud"></div>
+    <div id="boot">
+      <div class="b">
+        <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M16 3 28 10v12L16 29 4 22V10z" fill="none" stroke="currentColor" stroke-width="1.4" />
+          <circle cx="16" cy="16" r="3.2" fill="currentColor" />
+          <path d="M16 3v9.8M28 10l-9.2 4.4M28 22l-9.2-4.4M16 29v-9.8M4 22l9.2-4.4M4 10l9.2 4.4" stroke="currentColor" stroke-width="1" opacity=".7" />
+        </svg>
+        <h1>AI ATLAS</h1>
+        <p>Assembling the universe…</p>
+      </div>
+    </div>
+    <noscript>
+      <div id="nogl"><div><h1>AI Atlas 3D</h1><p>This site is an interactive 3D experience and needs JavaScript and WebGL.</p></div></div>
+    </noscript>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

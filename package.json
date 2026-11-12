@@ -1,0 +1,22 @@
+{
+  "name": "ai-atlas-3d",
+  "private": true,
+  "version": "1.0.0",
+  "description": "An immersive, interactive 3D atlas of how AI works",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:ml": "node tools/test-ml.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.2.0",
+    "@fontsource-variable/jetbrains-mono": "^5.2.0",
+    "@fontsource-variable/space-grotesk": "^5.2.0",
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "vite": "^8.3.8"
+  }
+}
