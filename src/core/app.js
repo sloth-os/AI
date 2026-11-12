@@ -173,6 +173,7 @@ export class App {
     this.controls.addEventListener('start', () => {
       this._fly?.cancel();
       this._userActive = true;
+      this._userMoved = true;
       this.controls.autoRotate = false;
       clearTimeout(this._idleTimer);
     });
@@ -323,6 +324,10 @@ export class App {
     }
     this._shiftTarget = { x: sx, y: sy };
     this._shift ??= { x: sx, y: sy };
+    if (this._home?.fit && !this._userMoved && this.controls) {
+      this._home.pos = this._fitPos(this._home);
+      if (!this._fly || !this.tweens.items.size) this.camera.position.fromArray(this._home.pos);
+    }
   }
 
   _applyShift(dt) {
@@ -389,12 +394,17 @@ export class App {
   // ------------------------------------------------------------------ camera
   /**
    * Set the chapter's camera immediately and remember it as "home" (the Reset view button).
-   * @param {{pos:number[], target?:number[], min?:number, max?:number, minPolar?:number, maxPolar?:number, fov?:number, autoRotate?:number}} v
+   * Pass `fit: radius` to have the distance chosen automatically so that a sphere of that radius around
+   * `target` fits between the panels on any screen; `pos` then only gives the viewing direction.
+   * @param {{pos:number[], target?:number[], fit?:number, min?:number, max?:number, minPolar?:number, maxPolar?:number, fov?:number, autoRotate?:number}} v
    */
   setView(v) {
     const view = { ...DEFAULT_VIEW, ...v };
     this._home = view;
     this._fly?.cancel();
+    this._userMoved = false;
+    this._resize();
+    if (view.fit) view.pos = this._fitPos(view);
     this.camera.position.fromArray(view.pos);
     this.controls.target.fromArray(view.target);
     this.controls.minDistance = view.min;
@@ -404,8 +414,30 @@ export class App {
     this._autoRotate = !!view.autoRotate && !this.reduceMotion;
     this.controls.autoRotateSpeed = view.autoRotate || 0;
     this.controls.autoRotate = this._autoRotate;
-    this._resize();
     this.controls.update();
+  }
+
+  /**
+   * Camera position that frames a sphere of radius `view.fit` around `view.target`, seen from the
+   * direction of `view.pos`, inside the part of the viewport that the panels leave free.
+   */
+  _fitPos(view) {
+    const w = window.innerWidth;
+    const hgt = window.innerHeight;
+    const hud = this.hud;
+    const open = (p) => !p.el.hidden && !p.el.classList.contains('collapsed') && !hud.root.classList.contains('no-panels');
+    let freeW = w;
+    let freeH = hgt - 56 - 84;
+    if (w > 860) freeW = w - (open(hud.L) ? hud.L.el.offsetWidth + 24 : 0) - (open(hud.R) ? hud.R.el.offsetWidth + 24 : 0);
+    else {
+      const sheet = hud.sheet === 'left' ? hud.L : hud.sheet === 'right' ? hud.R : null;
+      freeH = hgt - 100 - (sheet && open(sheet) ? sheet.el.offsetHeight + 70 : 70);
+    }
+    const tanV = Math.tan((this.camera.fov * Math.PI) / 360);
+    const half = Math.atan(tanV * Math.max(0.2, Math.min(freeW, freeH) / hgt));
+    const dist = Math.min(view.max * 0.95, Math.max(view.min * 1.05, view.fit / Math.sin(half)));
+    const dir = v3(view.pos).sub(v3(view.target)).normalize();
+    return v3(view.target).addScaledVector(dir, dist).toArray();
   }
 
   /** Change only the remembered home pose (used when a chapter has several sub-views). */

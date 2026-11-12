@@ -30,7 +30,7 @@ page.on('console', (m) => {
 page.on('pageerror', (e) => errors.push('PAGEERROR ' + e.message));
 const sep = base.includes('?') ? '&' : '?';
 await page.goto(`${base}${sep}q=${q}${hash}`, { waitUntil: 'load' });
-await page.waitForFunction(() => window.__atlas && !window.__atlas._navigating && window.__atlas.current, null, { timeout: 60000 }).catch(() => errors.push('TIMEOUT waiting for chapter'));
+await page.waitForFunction(() => window.__atlas && !window.__atlas._navigating && window.__atlas.current, null, { timeout: 240000 }).catch(() => errors.push('TIMEOUT waiting for chapter'));
 await page.waitForTimeout(wait);
 if (evalJs) {
   const r = await page.evaluate(evalJs).catch((e) => 'EVAL ERROR ' + e.message);

@@ -59,7 +59,7 @@ export function lineChart(o) {
   const legendEl = h('div.legend');
   const plot = h('div.chart-plot', canvas, tipEl);
   const el = h('figure.chart', o.title && h('figcaption', o.title), legendEl, plot);
-  const pad = { l: 40, r: 12, t: 8, b: o.xLabel ? 30 : 20 };
+  const pad = { l: 40, r: 12, t: o.yLabel ? 20 : 8, b: o.xLabel ? 30 : 20 };
   let hoverX = null;
   let geom = null;
   let rafQueued = false;
@@ -204,10 +204,17 @@ export function lineChart(o) {
   }
 
   function logTicks(lo, hi) {
-    const out = [];
-    for (let e = Math.ceil(lo - 1e-9); e <= Math.floor(hi + 1e-9); e++) out.push(e);
+    // decades, plus 2x and 5x steps when the range is short
+    const decades = [];
+    for (let e = Math.floor(lo); e <= Math.ceil(hi); e++) decades.push(e);
+    const inRange = (v) => v >= lo - 1e-9 && v <= hi + 1e-9;
+    let out = decades.filter(inRange);
+    if (out.length < 3) {
+      out = [];
+      for (const e of decades) for (const m of [1, 2, 5]) if (inRange(e + Math.log10(m))) out.push(e + Math.log10(m));
+    }
     if (out.length < 2) return niceTicks(lo, hi, 3);
-    while (out.length > 6) out.splice(1, 1);
+    while (out.length > 6) out = out.filter((_, i) => i % 2 === 0);
     return out;
   }
 
