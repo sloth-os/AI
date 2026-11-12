@@ -1,4 +1,4 @@
-// Text in the 3D world: billboard sprites and flat planes rasterised to canvas textures,
+// Text in the 3D world: billboard sprites and flat planes rasterized to canvas textures,
 // plus DOM labels (CSS2D) for the few places where crisp, clickable HTML is worth it.
 import * as THREE from 'three';
 import { CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
@@ -9,7 +9,7 @@ export const FONTS = {
   mono: '"JetBrains Mono Variable", ui-monospace, "SF Mono", Menlo, Consolas, monospace',
 };
 
-const PX = 56; // rasterisation size of one em
+const PX = 56; // rasterization size of one em
 const cache = new Map();
 
 const DEFAULTS = {
@@ -18,9 +18,9 @@ const DEFAULTS = {
   font: 'body',
   weight: 600,
   align: 'center',
-  anchor: [0.5, 0.5], // sprite pivot: [0,0.5] = left-middle, [0.5,0] = bottom-centre ...
-  bg: null, // css colour for a rounded backing plate
-  border: null, // css colour for the plate outline
+  anchor: [0.5, 0.5], // sprite pivot: [0,0.5] = left-middle, [0.5,0] = bottom-center ...
+  bg: null, // css color for a rounded backing plate
+  border: null, // css color for the plate outline
   radius: 0.32, // plate corner radius in em
   attenuate: true, // false = constant size on screen
   onTop: false, // true = ignore depth (always visible)
@@ -46,7 +46,7 @@ function wrap(text, maxChars) {
   return out;
 }
 
-function rasterise(text, o) {
+function rasterize(text, o) {
   const lines = wrap(text, o.maxChars);
   const font = `${o.weight} ${PX}px ${FONTS[o.font] || o.font}`;
   const canvas = document.createElement('canvas');
@@ -87,7 +87,7 @@ function getTexture(text, o) {
   const key = [text, o.color, o.font, o.weight, o.align, o.bg, o.border, o.radius, o.lineHeight, o.maxChars].join('|');
   let hit = cache.get(key);
   if (!hit) {
-    const { canvas, w, h } = rasterise(text, o);
+    const { canvas, w, h } = rasterize(text, o);
     const tex = new THREE.CanvasTexture(canvas);
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = 4;

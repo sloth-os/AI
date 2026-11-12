@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-/** Scene / brand accents. Decorative identity colours for chapters and glows. */
+/** Scene / brand accents. Decorative identity colors for chapters and glows. */
 export const PAL = {
   bg: '#05070d',
   ink: '#e6ecf8',
@@ -20,27 +20,27 @@ export const PAL = {
 };
 
 /**
- * Categorical series colours for data (charts AND the matching 3D marks), in fixed order.
- * Validated against the HUD surface #0b101c for colour-vision-deficiency separation and contrast.
+ * Categorical series colors for data (charts AND the matching 3D marks), in fixed order.
+ * Validated against the HUD surface #0b101c for color-vision-deficiency separation and contrast.
  * Never cycle past 8: fold extra series into "other" or use small multiples.
  */
 export const SERIES = ['#3987e5', '#d95926', '#199e70', '#c98500', '#d55181', '#008300', '#9085e9', '#e66767'];
 
-/** Reserved status colours: only for good / warning / serious / critical states (always with a label). */
+/** Reserved status colors: only for good / warning / serious / critical states (always with a label). */
 export const STATUS = { good: '#0ca30c', warning: '#fab219', serious: '#ec835a', critical: '#d03b3b' };
 
 const _a = new THREE.Color();
 const _b = new THREE.Color();
 
 /**
- * HDR colour for anything that should glow. The bloom pass only picks up channels above 1.0,
- * so `glow(c, 1)` is a plain colour and `glow(c, 2.5)` is a neon tube.
+ * HDR color for anything that should glow. The bloom pass only picks up channels above 1.0,
+ * so `glow(c, 1)` is a plain color and `glow(c, 2.5)` is a neon tube.
  */
 export function glow(color, k = 2.2) {
   return new THREE.Color(color).multiplyScalar(k);
 }
 
-/** Linear mix of two colours (in linear working space). Returns a new THREE.Color. */
+/** Linear mix of two colors (in linear working space). Returns a new THREE.Color. */
 export function mix(c1, c2, t) {
   return new THREE.Color(c1).lerp(_b.set(c2), t);
 }
@@ -60,7 +60,7 @@ export function seq(t, out = new THREE.Color()) {
   return ramp(SEQ_STOPS, t, out);
 }
 
-/** Diverging ramp for signed values, v in [-1, 1]: blue (negative) - neutral grey - red (positive). */
+/** Diverging ramp for signed values, v in [-1, 1]: blue (negative) - neutral gray - red (positive). */
 export function div(v, out = new THREE.Color()) {
   return v < 0 ? ramp(DIV_NEG, -v, out) : ramp(DIV_POS, v, out);
 }
@@ -73,7 +73,7 @@ export function divCss(v) {
   return '#' + div(v, _a).getHexString();
 }
 
-/** sRGB css colour with alpha from a css hex colour (no colour-space conversion: for DOM/canvas use). */
+/** sRGB css color with alpha from a css hex color (no color-space conversion: for DOM/canvas use). */
 export function withAlpha(hex, a) {
   const h = hex.replace('#', '');
   const n = parseInt(h.length === 3 ? h.split('').map((c) => c + c).join('') : h, 16);

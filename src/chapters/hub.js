@@ -9,12 +9,12 @@ import { HOT_AS_OF } from '../data/hot.js';
 
 const PORTALS = [
   { nav: 'families', icon: 'constellation', sub: 'Every kind of AI, on one map', tip: 'Symbolic AI, classical ML, deep learning, generative models, reinforcement learning, agents: how they relate and when each appeared.' },
-  { nav: 'labs', icon: 'network', sub: 'Open the machines and run them', tip: 'Seven hands-on labs: a real GPT, a CNN you can draw for, diffusion, reinforcement learning, optimisers, embeddings.' },
+  { nav: 'labs', icon: 'network', sub: 'Open the machines and run them', tip: 'Seven hands-on labs: a real GPT, a CNN you can draw for, diffusion, reinforcement learning, optimizers, embeddings.' },
   { nav: 'problems', icon: 'tower', sub: 'Eight levels, six requirements', tip: 'From data and chips up to agents and safety: the problems at each level, the competing solutions and their trade-offs.' },
-  { nav: 'flow', icon: 'pipeline', sub: 'How data transforms and travels', tip: 'Follow one request through tokenisation, tensors, retrieval, tool calls and protocols such as MCP.' },
-  { nav: 'perf', icon: 'bars', sub: 'Measured live on your machine', tip: 'Quantisation, KV caching, batching, model bake-offs and the record books.' },
+  { nav: 'flow', icon: 'pipeline', sub: 'How data transforms and travels', tip: 'Follow one request through tokenization, tensors, retrieval, tool calls and protocols such as MCP.' },
+  { nav: 'perf', icon: 'bars', sub: 'Measured live on your machine', tip: 'Quantization, KV caching, batching, model bake-offs and the record books.' },
   { nav: 'ecosystem', icon: 'galaxy', sub: 'The projects that run AI', tip: 'Frameworks, models, serving engines, vector databases, agent tools: what each does and the algorithm at its core.' },
-  { nav: 'deploy', icon: 'cloud', sub: 'From data centre to browser tab', tip: 'Ten deployment modes compared: cloud API, self-hosted, Kubernetes, serverless, edge, in-browser, hybrid, federated.' },
+  { nav: 'deploy', icon: 'cloud', sub: 'From data center to browser tab', tip: 'Ten deployment modes compared: cloud API, self-hosted, Kubernetes, serverless, edge, in-browser, hybrid, federated.' },
   { nav: 'hot', icon: 'flame', sub: `Top 10, as of ${HOT_AS_OF}`, tip: 'The ten hottest issues in AI right now, each with its own 3D animation and dated sources.' },
 ];
 
@@ -30,7 +30,7 @@ function buildCore(ctx) {
     const a = i * Math.PI * (3 - Math.sqrt(5));
     nodes.push(new THREE.Vector3(Math.cos(a) * r, y, Math.sin(a) * r).multiplyScalar(R * (0.93 + rnd() * 0.14)));
   }
-  // connect each node to its nearest neighbours: the "synapses"
+  // connect each node to its nearest neighbors: the "synapses"
   const pairs = [];
   const links = [];
   for (let i = 0; i < N; i++) {
@@ -58,7 +58,7 @@ function buildCore(ctx) {
   });
   g.add(points(pos, col, size));
 
-  // signals travelling along the synapses
+  // signals traveling along the synapses
   const P = 70;
   const ppos = new Float32Array(P * 3);
   const pcol = new Float32Array(P * 3);

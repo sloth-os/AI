@@ -205,7 +205,7 @@ export class Hud {
   fade(on, label = '') {
     const el = this.fadeEl;
     el.querySelector('span').textContent = label;
-    el.classList.toggle('labelled', !!label);
+    el.classList.toggle('labeled', !!label);
     return new Promise((resolve) => {
       if (el.classList.contains('on') === on) return resolve();
       const done = () => {
@@ -221,6 +221,6 @@ export class Hud {
 
   loading(label) {
     this.fadeEl.querySelector('span').textContent = label || '';
-    this.fadeEl.classList.toggle('labelled', !!label);
+    this.fadeEl.classList.toggle('labeled', !!label);
   }
 }

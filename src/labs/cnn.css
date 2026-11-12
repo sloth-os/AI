@@ -1,0 +1,168 @@
+/* How a CNN Sees: drawing pad, prediction list, kernel read-outs */
+.cnn-draw {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(108px, 40%);
+  gap: 10px;
+  align-items: stretch;
+}
+.cnn-pad {
+  width: 100%;
+  aspect-ratio: 1;
+  display: block;
+  border-radius: 10px;
+  border: 1px solid var(--line-2);
+  background: #000;
+  cursor: crosshair;
+  touch-action: none;
+}
+.cnn-pad:hover {
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--line-2));
+}
+.cnn-probs {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+.cnn-prob {
+  display: grid;
+  grid-template-columns: 9px 1fr 36px;
+  align-items: center;
+  gap: 6px;
+  padding: 1px 3px;
+  border: 0;
+  border-radius: 5px;
+  background: none;
+  cursor: pointer;
+  font: 600 11px/1.2 var(--font-mono);
+  color: var(--ink-3);
+  text-align: left;
+}
+.cnn-prob:hover,
+.cnn-prob.pick {
+  background: var(--raise-2);
+}
+.cnn-prob .pb {
+  height: 7px;
+  border-radius: 4px;
+  background: rgba(57, 135, 229, 0.16);
+  overflow: hidden;
+}
+.cnn-prob .pb i {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 4px;
+  background: #3987e5;
+  transition: width 0.12s linear;
+}
+.cnn-prob .pv {
+  text-align: right;
+}
+.cnn-prob.on {
+  color: var(--ink);
+}
+.cnn-prob.on .pb i {
+  background: #86b6ef;
+}
+.cnn-status {
+  font-size: 12.3px;
+  color: var(--ink-2);
+  min-height: 19px;
+}
+.cnn-status b {
+  font: 700 14px/1 var(--font-mono);
+  color: var(--ink);
+}
+.cnn-samples {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cnn-digits {
+  flex: 1;
+  display: flex;
+  padding: 2px;
+  border-radius: 9px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--line);
+}
+.cnn-digits button,
+.cnn-chips button {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 0;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--ink-2);
+  font: 600 12px/1 var(--font-mono);
+  cursor: pointer;
+}
+.cnn-digits button:hover,
+.cnn-chips button:hover {
+  background: var(--raise-2);
+  color: var(--ink);
+}
+.cnn-chips {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 2px;
+  padding: 2px;
+  border-radius: 9px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--line);
+}
+.cnn-chips button.on {
+  background: var(--raise-2);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+.cnn-kernel {
+  display: grid;
+  grid-template-columns: 154px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+.cnn-kernel.cnn-k2 {
+  grid-template-columns: minmax(0, 1fr);
+}
+.cnn-k2 .chart-tip {
+  display: none;
+}
+.cnn-patchbox {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.cnn-patches {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+}
+.cnn-cap {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.cnn-calcbox {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 11px 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  border-left: 3px solid #ffb84d;
+  background: var(--raise);
+}
+.cnn-calc {
+  display: block;
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+}
+.cnn-calcbox .cnn-cap {
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}

@@ -6,7 +6,7 @@ import groteskUrl from '@fontsource-variable/space-grotesk/files/space-grotesk-l
 import monoUrl from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 
 // Fonts are loaded through the FontFace API (not CSS) so we can wait for them before any 3D text
-// label is rasterised to a canvas texture.
+// label is rasterized to a canvas texture.
 async function loadFonts() {
   const faces = [
     ['Inter Variable', interUrl, '100 900'],

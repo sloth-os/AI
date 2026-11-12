@@ -305,7 +305,7 @@ export class App {
   }
 
   /**
-   * Shift the projection so the scene's centre sits in the middle of the area the panels leave free
+   * Shift the projection so the scene's center sits in the middle of the area the panels leave free
    * (called by the HUD whenever a panel appears, collapses or resizes).
    */
   layout() {
@@ -349,11 +349,13 @@ export class App {
     const raw = (now - this._last) / 1000;
     this._last = now;
     const dt = Math.min(raw, 0.05);
+    // tweens follow the wall clock (up to a point) so camera moves do not drag on slow devices
+    const dtTween = Math.min(raw, 0.4);
     this.time += dt;
-    this.tweens.update(dt);
+    this.tweens.update(dtTween);
     const cur = this.current;
     if (cur) {
-      cur.ctx.tweens.update(dt);
+      cur.ctx.tweens.update(dtTween);
       try {
         cur.ctrl.update?.(dt, this.time);
       } catch (err) {
@@ -438,6 +440,16 @@ export class App {
     const dist = Math.min(view.max * 0.95, Math.max(view.min * 1.05, view.fit / Math.sin(half)));
     const dir = v3(view.pos).sub(v3(view.target)).normalize();
     return v3(view.target).addScaledVector(dir, dist).toArray();
+  }
+
+  /**
+   * Fly so that a sphere of radius `fit` around `target` fills the free area, looking along `dir`
+   * (a vector from the target towards the camera). Returns the flight's promise.
+   */
+  frame({ target, dir, fit }, dur = 1.2) {
+    const t = v3(target).toArray();
+    const pos = this._fitPos({ ...this._home, target: t, pos: v3(target).add(v3(dir)).toArray(), fit });
+    return this.flyTo(pos, t, dur);
   }
 
   /** Change only the remembered home pose (used when a chapter has several sub-views). */

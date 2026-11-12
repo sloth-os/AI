@@ -129,7 +129,7 @@ export function segmented(options, value, onChange, o = {}) {
   return api;
 }
 
-/** Labelled range slider. format(v) renders the value read-out. */
+/** Labeled range slider. format(v) renders the value read-out. */
 export function slider(o) {
   const fmt = o.format ?? ((v) => String(+v.toFixed(3)));
   const out = h('output', fmt(o.value));
@@ -324,8 +324,8 @@ export function tour(ctx, steps, o = {}) {
     return b;
   });
   const title = h('span.t');
-  const prev = h('button.btn.ghost.nav', { type: 'button', title: 'Previous step (←)', onclick: () => api.prev() }, '←');
-  const next = h('button.btn.primary.nav', { type: 'button', title: 'Next step (→)', onclick: () => api.next() }, 'Next →');
+  const prev = h('button.btn.ghost.stepbtn', { type: 'button', title: 'Previous step (←)', onclick: () => api.prev() }, '←');
+  const next = h('button.btn.primary.stepbtn', { type: 'button', title: 'Next step (→)', onclick: () => api.next() }, 'Next →');
   const dock = h('div.tour', prev, h('div.mid', title, h('div.dots', dots)), next);
   const api = {
     dock,
@@ -349,7 +349,8 @@ export function tour(ctx, steps, o = {}) {
       const content = [h('h2.steptitle', h('span.num', String(i + 1).padStart(2, '0')), s.title)];
       if (s.text) content.push(text(s.text));
       if (s.body) content.push(typeof s.body === 'function' ? s.body() : s.body);
-      body.replaceChildren(...content);
+      // a body may be a node, a {el} component, or an array of those
+      body.replaceChildren(...content.flat(Infinity).filter((n) => n != null && n !== false).map((n) => (n.el instanceof Node ? n.el : n)));
       body.parentElement?.scrollTo?.({ top: 0 });
       if (!silent && o.syncUrl !== false) {
         const r = ctx.router.current();

@@ -122,7 +122,7 @@ export class Background {
     this.group.add(starPts);
   }
 
-  /** Chapters tint the nebula with their accent colour. */
+  /** Chapters tint the nebula with their accent color. */
   setTint(color) {
     this.tintTarget.set(color);
   }

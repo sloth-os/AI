@@ -1,4 +1,4 @@
-// Gradient-descent optimisers and 2-parameter test landscapes for the Optimizer Arena.
+// Gradient-descent optimizers and 2-parameter test landscapes for the Optimizer Arena.
 // Everything is plain math on [x, y] so the 3D scene can show exactly what is computed.
 
 /** @typedef {{id:string, name:string, formula:string, init:()=>object, step:(s:object, p:number[], grad:(p:number[])=>number[], lr:number)=>void}} Optimizer */
@@ -75,7 +75,7 @@ export const OPTIMIZERS = [
 ];
 
 /**
- * Test landscapes. `lr` holds each optimiser's default step size for that surface: about 60% of the
+ * Test landscapes. `lr` holds each optimizer's default step size for that surface: about 60% of the
  * best value found by a sweep over step sizes (a realistic safety margin, the way a practitioner
  * tunes). `tol` is how close to the best loss counts as solved; `curve` shapes the height mapping.
  */
@@ -125,7 +125,7 @@ export const SURFACES = [
   {
     id: 'four',
     name: 'Four minima',
-    blurb: 'Himmelblau’s function has four equally good minima. Where you end up depends on the optimiser’s dynamics, not only on where you start.',
+    blurb: 'Himmelblau’s function has four equally good minima. Where you end up depends on the optimizer’s dynamics, not only on where you start.',
     f: ([x, y]) => (x * x + y - 11) ** 2 + (x + y * y - 7) ** 2,
     grad: ([x, y]) => [4 * x * (x * x + y - 11) + 2 * (x + y * y - 7), 2 * (x * x + y - 11) + 4 * y * (x + y * y - 7)],
     domain: [-5, 5, -5, 5],
@@ -160,7 +160,7 @@ export function gauss() {
 }
 
 /**
- * One optimiser run on one surface.
+ * One optimizer run on one surface.
  * `noise` models mini-batch noise: each gradient is perturbed by noise · (|g| + small floor).
  */
 export class Run {

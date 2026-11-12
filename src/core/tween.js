@@ -37,7 +37,7 @@ export class TweenGroup {
    * @param {{dur?: number, delay?: number, ease?: (t:number)=>number, update?: (k:number, t:number)=>void,
    *          done?: ()=>void, loop?: boolean, yoyo?: boolean}} o
    *        update receives k = eased progress 0..1 and t = raw progress.
-   * @returns {{cancel: ()=>void, promise: Promise<boolean>}} promise resolves true when finished, false if cancelled.
+   * @returns {{cancel: ()=>void, promise: Promise<boolean>}} promise resolves true when finished, false if canceled.
    */
   add(o) {
     let resolve;

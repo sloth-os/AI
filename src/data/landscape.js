@@ -4,18 +4,18 @@
 
 export const AS_OF = '12 Nov 2026';
 
-/** Flagship models by lab. weights: 'closed' | 'open' (licence in note). ctx = context window in tokens. */
+/** Flagship models by lab. weights: 'closed' | 'open' (license in note). ctx = context window in tokens. */
 export const FRONTIER = [
   { lab: 'OpenAI', model: 'GPT-6 Astra', date: 'Sep 2026', ctx: 1_050_000, weights: 'closed', note: 'Family: Astra, Luna (small), 6.1 Sol and Terra. 128K max output.', src: 'https://developers.openai.com/api/docs/models' },
   { lab: 'Anthropic', model: 'Claude Fable 5.2', date: 'Nov 2026', ctx: 1_000_000, weights: 'closed', note: 'Top tier above Opus 5.5 (the default), Sonnet 5.5 and Haiku 5.5.', src: 'https://platform.claude.com/docs/en/about-claude/models/overview' },
   { lab: 'Google DeepMind', model: 'Gemini 4 Carbon', date: 'Nov 2026', ctx: 1_000_000, weights: 'closed', note: 'With Gemini 4 Argon and 3.8 Flash. Open line: Gemma 4 (Apache 2.0).', src: 'https://aistudio.google.com/docs/models' },
-  { lab: 'Meta', model: 'Muse Spark Open', date: 'Oct 2026', ctx: 1_000_000, weights: 'open', note: '816B-parameter mixture-of-experts, 42B active per token. Custom gated licence.', src: 'https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B' },
+  { lab: 'Meta', model: 'Muse Spark Open', date: 'Oct 2026', ctx: 1_000_000, weights: 'open', note: '816B-parameter mixture-of-experts, 42B active per token. Custom gated license.', src: 'https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B' },
   { lab: 'xAI', model: 'Grok 4.7', date: 'Sep 2026', ctx: 500_000, weights: 'closed', note: '', src: 'https://docs.x.ai/docs/models' },
-  { lab: 'Mistral', model: 'Mistral Large 4', date: 'Oct 2026', ctx: null, weights: 'open', note: '1.05T-parameter MoE, 52B active. Custom open-weight licence.', src: 'https://docs.mistral.ai/getting-started/models/models_overview/' },
+  { lab: 'Mistral', model: 'Mistral Large 4', date: 'Oct 2026', ctx: null, weights: 'open', note: '1.05T-parameter MoE, 52B active. Custom open-weight license.', src: 'https://docs.mistral.ai/getting-started/models/models_overview/' },
   { lab: 'DeepSeek', model: 'DeepSeek-V4 Pro / V4.1 Flash', date: 'Aug–Oct 2026', ctx: 1_000_000, weights: 'open', note: 'MIT-licensed weights; Pro is listed at 1.7T parameters.', src: 'https://api-docs.deepseek.com/quick_start/pricing' },
   { lab: 'Alibaba', model: 'Qwen3.8', date: 'Aug 2026', ctx: 1_000_000, weights: 'open', note: '2.4T MoE (95B active) plus a 27B Apache-2.0 model that mixes linear and full attention.', src: 'https://www.alibabacloud.com/blog/603463' },
   { lab: 'Moonshot', model: 'Kimi K3.1 Pro', date: 'Oct 2026', ctx: 1_048_576, weights: 'open', note: '2.8T MoE, 104B active; ships 4-bit floating-point (MXFP4) weights.', src: 'https://huggingface.co/moonshotai/Kimi-K3.1-Pro' },
-  { lab: 'Z.ai (Zhipu)', model: 'GLM-5.3', date: 'Aug 2026', ctx: null, weights: 'open', note: '753B parameters, custom licence.', src: 'https://huggingface.co/zai-org/GLM-5.3' },
+  { lab: 'Z.ai (Zhipu)', model: 'GLM-5.3', date: 'Aug 2026', ctx: null, weights: 'open', note: '753B parameters, custom license.', src: 'https://huggingface.co/zai-org/GLM-5.3' },
 ];
 
 /** What people actually run on their own machines: Ollama pull counts (millions), Nov 2026. */
@@ -59,7 +59,7 @@ export const PROTOCOLS = [
   },
   {
     id: 'a2a', name: 'Agent2Agent (A2A)', role: 'agent ↔ agent',
-    status: 'v1.0 in March 2026; joined the Agentic AI Foundation in August 2026, backed by 150+ organisations. Agents publish an Agent Card, then exchange tasks, messages and artifacts.',
+    status: 'v1.0 in March 2026; joined the Agentic AI Foundation in August 2026, backed by 150+ organizations. Agents publish an Agent Card, then exchange tasks, messages and artifacts.',
     src: 'https://a2a-protocol.org/latest/blog/2026/08/27/a-new-chapter-for-a2a-joining-the-agentic-ai-foundation/',
   },
   { id: 'agui', name: 'AG-UI', role: 'agent ↔ user interface', status: 'Event stream between an agent backend and a front end (messages, tool calls, state patches). Integrated by several agent frameworks.', src: 'https://github.com/ag-ui-protocol/ag-ui' },
@@ -80,7 +80,7 @@ export const SERVING_NOTES = [
 export const TECHNIQUES_2026 = [
   { name: 'Trillion-parameter open-weight mixtures of experts', text: 'Qwen3.8 (2.4T), Kimi K3.1 Pro (2.8T), DeepSeek-V4 Pro (1.7T) and Mistral Large 4 (1.05T) activate only 50–100B parameters per token.', src: 'https://huggingface.co/moonshotai/Kimi-K3.1-Pro' },
   { name: 'Hybrid linear + full attention', text: 'Qwen3.8-27B interleaves three linear-time Gated DeltaNet layers with one full-attention layer, repeated 16 times.', src: 'https://huggingface.co/Qwen/Qwen3.8-27B' },
-  { name: '4-bit floating-point weights', text: 'Models are now released in MXFP4 / NVFP4 with quantisation-aware training: Muse Spark Open needs about 700 GB of VRAM in NVFP4 versus 2 TB in BF16.', src: 'https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B' },
+  { name: '4-bit floating-point weights', text: 'Models are now released in MXFP4 / NVFP4 with quantization-aware training: Muse Spark Open needs about 700 GB of VRAM in NVFP4 versus 2 TB in BF16.', src: 'https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B' },
   { name: 'Ternary (1.58-bit) models', text: 'Weights restricted to −1, 0, +1. A 27B ternary model is among the most downloaded on Hugging Face.', src: 'https://prismml.com/news/prismml-introduces-ternary-bonsai-model-family' },
   { name: 'Adaptive thinking', text: 'Reasoning is always on and steered by an effort setting instead of a manual token budget.', src: 'https://platform.claude.com/docs/en/about-claude/models/overview' },
   { name: 'Text diffusion', text: 'Open-weight diffusion language models (for example DiffusionGemma) generate all positions in parallel and refine them. Still niche.', src: 'https://arxiv.org/abs/2608.00146' },

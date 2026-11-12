@@ -1,5 +1,5 @@
 // Procedural 3D glyphs (about 1.6 units across) used on portals and gallery pods, so every
-// chapter and lab has a recognisable object instead of a flat icon.
+// chapter and lab has a recognizable object instead of a flat icon.
 // icon(name, color) returns a Group; if it animates, group.userData.tick(t, dt) drives it.
 import * as THREE from 'three';
 import { glowMat, stdMat, glassMat, line, segments, edges, rbox, points, rng, arc, halo } from './geom.js';
@@ -269,11 +269,11 @@ export const ICONS = {
     const pos = new Float32Array(n * 3);
     const col = new Float32Array(n * 3);
     const size = new Float32Array(n);
-    const centres = [[-0.5, 0.25, 0.1], [0.5, 0.3, -0.2], [0.05, -0.45, 0.3], [0.1, 0.1, -0.6]];
+    const centers = [[-0.5, 0.25, 0.1], [0.5, 0.3, -0.2], [0.05, -0.45, 0.3], [0.1, 0.1, -0.6]];
     for (let i = 0; i < n; i++) {
-      const k = i % centres.length;
+      const k = i % centers.length;
       const cc = glow(SERIES[[0, 1, 2, 6][k]], 2.2);
-      pos.set([centres[k][0] + rnd.normal() * 0.17, centres[k][1] + rnd.normal() * 0.17, centres[k][2] + rnd.normal() * 0.17], i * 3);
+      pos.set([centers[k][0] + rnd.normal() * 0.17, centers[k][1] + rnd.normal() * 0.17, centers[k][2] + rnd.normal() * 0.17], i * 3);
       col.set([cc.r, cc.g, cc.b], i * 3);
       size[i] = 0.05 + rnd() * 0.04;
     }
@@ -282,7 +282,7 @@ export const ICONS = {
     return g;
   },
 
-  /** optimiser: a ball spiralling down a loss bowl */
+  /** optimizer: a ball spiralling down a loss bowl */
   optim(c) {
     const g = new THREE.Group();
     for (let i = 1; i <= 5; i++) {
@@ -302,7 +302,7 @@ export const ICONS = {
     return g;
   },
 
-  /** quantisation: a smooth curve next to its staircase */
+  /** quantization: a smooth curve next to its staircase */
   quant(c) {
     const g = new THREE.Group();
     const smooth = [];

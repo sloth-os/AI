@@ -1,4 +1,4 @@
-// Small 2D charts for the HUD. Thin marks, hairline grid, fixed categorical colours, a legend for
+// Small 2D charts for the HUD. Thin marks, hairline grid, fixed categorical colors, a legend for
 // two or more series, and a hover read-out so no value is hidden behind a guess.
 import { h } from './ui.js';
 import { SERIES, seqCss, divCss } from './colors.js';
@@ -48,7 +48,7 @@ function setupCanvas(canvas, w, hgt) {
  *   height?: number, series: {name:string, color?:string, data:(number[]|[number,number][])}[],
  *   xLabel?: string, yLabel?: string, yLog?: boolean, xLog?: boolean, yDomain?: [number,number], xDomain?: [number,number],
  *   yFormat?: (v:number)=>string, xFormat?: (v:number)=>string, legend?: boolean, title?: string
- * }} o   data is y-values (x = index) or [x, y] pairs. Colours default to the fixed series order.
+ * }} o   data is y-values (x = index) or [x, y] pairs. Colors default to the fixed series order.
  * @returns {{el: HTMLElement, update: (series?: any[]) => void}}
  */
 export function lineChart(o) {
@@ -278,7 +278,7 @@ export function lineChart(o) {
 
 /**
  * Ranked horizontal bars, one row per item. rows: [{label, value, color?, note?, title?, active?}]
- * One colour for all bars unless a row's colour identifies an entity that is coloured the same elsewhere.
+ * One color for all bars unless a row's color identifies an entity that is colored the same elsewhere.
  */
 export function barChart(o) {
   const el = h('figure.chart.bars', o.title && h('figcaption', o.title));

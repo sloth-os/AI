@@ -73,22 +73,24 @@ Call `ctx.app.setView({...})` once in `enter`. Prefer `fit`:
 app.setView({ pos: [7, 8, 11], target: [0, 1.2, 0], fit: 8.4, min: 5, max: 60, maxPolar: Math.PI * 0.49 });
 ```
 
-`pos` gives the viewing direction, `fit` is the radius of the sphere around `target` that must stay
+The camera is placed on the ray from `target` through `pos` (so `pos` is still a position, not a
+direction vector); `fit` is the radius of the sphere around `target` that must stay
 visible; the engine picks the distance so it fits **between the panels** on any screen and keeps
-the scene centred in that free area. Use `app.flyTo(pos, target, seconds)` for moves inside a chapter.
+the scene centered in that free area. Inside a chapter use `app.flyTo(pos, target, seconds)`, or
+`app.frame({ target, dir, fit }, seconds)` to fly to a framed view of part of the scene.
 
 ## Look and feel rules
 
-* **Glow is HDR.** The bloom pass only reacts to colour channels above 1.0. `glow(color, k)` and
-  `glowMat(color, {k})` multiply a colour: `k ≈ 1` is a flat colour, `k ≈ 2–3` is neon. Lit
+* **Glow is HDR.** The bloom pass only reacts to color channels above 1.0. `glow(color, k)` and
+  `glowMat(color, {k})` multiply a color: `k ≈ 1` is a flat color, `k ≈ 2–3` is neon. Lit
   materials (`stdMat`) and text stay below 1 and therefore stay crisp. Do not make large surfaces
   glow; reserve it for edges, particles, active elements.
-* **Colour by job.** `SERIES` (8 fixed, colour-blind-validated colours) identifies data series and
-  the 3D marks that correspond to them: the same entity has the same colour in the scene, the
+* **Color by job.** `SERIES` (8 fixed, color-blind-validated colors) identifies data series and
+  the 3D marks that correspond to them: the same entity has the same color in the scene, the
   legend and the chart, and keeps it when others are filtered out. `seq(t)` / `seqCss(t)` is the
-  single-hue ramp for magnitudes, `div(v)` / `divCss(v)` the blue-grey-red ramp for signed values.
-  `STATUS` colours mean good / warning / critical only. `PAL` accents are decorative.
-* **Text never wears the data colour**: put a coloured swatch next to neutral text.
+  single-hue ramp for magnitudes, `div(v)` / `divCss(v)` the blue-gray-red ramp for signed values.
+  `STATUS` colors mean good / warning / critical only. `PAL` accents are decorative.
+* **Text never wears the data color**: put a colored swatch next to neutral text.
 * Charts: a legend for two or more series, thin marks, hairline grid, one y-axis, hover read-out.
   The chart helpers already do this. Do not put a number on every mark.
 * Use instancing (`instanced`, `setInst`, `flushInst`) or `points` for more than ~150 similar
@@ -96,7 +98,7 @@ the scene centred in that free area. Use `app.flyTo(pos, target, seconds)` for m
 * Every interaction must also work without hover (touch): put the same information in a panel.
 * Honesty: anything shown as a measurement is computed live by code in `src/ml/`; anything quoted
   from the outside world sits in `src/data/` with a source URL and a date; qualitative ratings are
-  labelled as editorial.
+  labeled as editorial.
 
 ## Panels
 

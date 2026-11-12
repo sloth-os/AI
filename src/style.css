@@ -136,7 +136,7 @@ a:hover {
   transition: background 0.5s;
   vertical-align: 2px;
 }
-.nav {
+.topbar .nav {
   flex: 1;
   display: flex;
   gap: 2px;
@@ -146,7 +146,7 @@ a:hover {
   mask-image: linear-gradient(90deg, transparent, #000 16px, #000 calc(100% - 16px), transparent);
   padding: 0 12px;
 }
-.nav::-webkit-scrollbar {
+.topbar .nav::-webkit-scrollbar {
   display: none;
 }
 .navlink {
@@ -370,6 +370,9 @@ a:hover {
   align-items: center;
   gap: 7px;
 }
+.tour .btn {
+  flex: none;
+}
 .tour .t {
   font: 600 12.5px/1.2 var(--font-display);
   color: var(--ink);
@@ -565,6 +568,7 @@ code {
   font-size: 11.5px;
   border-radius: 8px;
 }
+.btn.stepbtn,
 .btn.nav {
   min-width: 44px;
   height: 38px;
@@ -1178,7 +1182,7 @@ textarea:focus {
   opacity: 0;
   transition: opacity 0.25s 0.15s;
 }
-.fade.on.labelled .fade-label {
+.fade.on.labeled .fade-label {
   opacity: 1;
 }
 .spin {
@@ -1350,7 +1354,7 @@ textarea:focus {
   .brand {
     flex: 1;
   }
-  .nav {
+  .topbar .nav {
     order: 3;
     flex: 0 0 100%;
     justify-content: flex-start;
@@ -1359,7 +1363,7 @@ textarea:focus {
   .tool.q b {
     display: none;
   }
-  .panel,
+  .panel.left,
   .panel.right,
   .panel.right.fit {
     left: 8px;

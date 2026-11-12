@@ -1,4 +1,4 @@
-// Optimizer Arena: five gradient-descent optimisers race on the same loss landscape.
+// Optimizer Arena: five gradient-descent optimizers race on the same loss landscape.
 // The math lives in ../ml/optim.js; this file draws it and wires the controls.
 import * as THREE from 'three';
 import { OPTIMIZERS, SURFACES, Run } from '../ml/optim.js';
@@ -145,7 +145,7 @@ export async function enter(ctx) {
   let start = [...surface.start];
   let lrScale = 1;
   let noise = 0;
-  let speed = 40; // optimiser steps per second
+  let speed = 40; // optimizer steps per second
   let playing = false;
   let acc = 0;
   let finishedNotified = false;
@@ -220,7 +220,7 @@ export async function enter(ctx) {
     const ranked = [...act].sort((a, b) => (a.run.solvedAt ?? 1e9) - (b.run.solvedAt ?? 1e9) || a.run.loss - b.run.loss);
     board.replaceChildren(
       table(
-        ['Optimiser', 'Solved at step', 'Loss now'],
+        ['Optimizer', 'Solved at step', 'Loss now'],
         ranked.map((r, i) => [
           h('span', h('i', { style: { display: 'inline-block', width: '14px', height: '3px', borderRadius: '2px', background: COLOR[r.opt.id], marginRight: '7px', verticalAlign: 'middle' } }), r.opt.name + (i === 0 && r.run.solvedAt != null ? '  ★' : '')),
           r.run.diverged ? 'diverged' : r.run.solvedAt != null ? fmt.int(r.run.solvedAt) : 'not yet',
@@ -258,7 +258,7 @@ export async function enter(ctx) {
     {
       title: 'A loss landscape',
       text: 'Training a model means searching for weights that make its error (the **loss**) small. With only two weights we can draw every possibility: each point on the floor is a pair of weights, and the height is how wrong the model would be there.\n\nReal models have billions of weights, so the landscape has billions of dimensions, but the game is the same: **walk downhill without being able to see the map**.',
-      body: () => callout('Click anywhere on the surface to drop the optimisers at that spot.', 'key'),
+      body: () => callout('Click anywhere on the surface to drop the optimizers at that spot.', 'key'),
       enter: () => setSurface('four', { active: ['sgd'], play: false }),
     },
     {
@@ -281,26 +281,26 @@ export async function enter(ctx) {
     },
     {
       title: 'Traps',
-      text: 'On the bumpy bowl plain descent stops in the first dip it finds, while momentum rolls through. Now raise **gradient noise**: the jitter of mini-batches shakes SGD out of shallow dips. Noise is not only a cost, it is part of why SGD generalises.',
+      text: 'On the bumpy bowl plain descent stops in the first dip it finds, while momentum rolls through. Now raise **gradient noise**: the jitter of mini-batches shakes SGD out of shallow dips. Noise is not only a cost, it is part of why SGD generalizes.',
       enter: () => setSurface('bumpy', { active: ['sgd', 'momentum', 'nesterov', 'rmsprop', 'adam'], play: true }),
     },
     {
       title: 'Your arena',
-      text: 'Pick any landscape, change the step size, switch optimisers on and off, and click the surface to choose a starting point. On **Four minima** the adaptive optimisers end in a different valley from the others: the optimiser shapes _which_ solution you get, not only how fast.',
-      body: () => callout('Each optimiser starts at about 60% of its own best step size for the landscape (found by a sweep), the safety margin people use in practice. The step-size slider scales all of them together.', 'info', 'Is the race fair?'),
+      text: 'Pick any landscape, change the step size, switch optimizers on and off, and click the surface to choose a starting point. On **Four minima** the adaptive optimizers end in a different valley from the others: the optimizer shapes _which_ solution you get, not only how fast.',
+      body: () => callout('Each optimizer starts at about 60% of its own best step size for the landscape (found by a sweep), the safety margin people use in practice. The step-size slider scales all of them together.', 'info', 'Is the race fair?'),
       enter: () => setSurface('four', { active: ['sgd', 'momentum', 'nesterov', 'rmsprop', 'adam'], play: true }),
     },
   ];
   const guide = tour(ctx, steps, { lastLabel: 'Next lab →', onFinish: () => ctx.router.go('labs/cnn') });
 
   ctx.ui.left(
-    header({ kicker: 'Lab · Optimizer Arena', title: 'How a model finds its way downhill', lead: 'Five optimisers, one landscape, the same starting point.' }),
+    header({ kicker: 'Lab · Optimizer Arena', title: 'How a model finds its way downhill', lead: 'Five optimizers, one landscape, the same starting point.' }),
     guide.body,
   );
   ctx.ui.right(
     section('Landscape', surfSeg, blurb),
     h('div.btnrow', playBtn, button('Step', { onClick: () => { setPlaying(false); stepAll(1); refresh(); } }), button('Reset', { onClick: () => { reset(); setPlaying(false); } })),
-    section('Optimisers', optChips),
+    section('Optimizers', optChips),
     lrSlider,
     noiseSlider,
     speedSlider,

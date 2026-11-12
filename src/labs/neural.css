@@ -1,0 +1,130 @@
+/* Neural Network Lab */
+.nn-grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+  align-items: end;
+}
+.nn-grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px 12px;
+}
+.nn-grid2 .slider .lab,
+.nn-grid3 .slider .lab {
+  white-space: nowrap;
+}
+.nn-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nn-row > .lab {
+  flex: none;
+  color: var(--ink-2);
+  font-size: 12.5px;
+}
+.nn-row > .seg {
+  flex: 1;
+}
+.nn-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+.nn-field > .lab {
+  color: var(--ink-2);
+  font-size: 12.5px;
+}
+.nn-live {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.42);
+  border: 1px solid var(--line);
+  font: 500 11.5px/1.6 var(--font-mono);
+  color: var(--ink-2);
+  white-space: pre-wrap;
+}
+.nn-live b {
+  color: var(--ink);
+  font-weight: 650;
+}
+.nn-key {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 12px;
+  font-size: 11.5px;
+  color: var(--ink-2);
+}
+.nn-key span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+.nn-key i {
+  flex: none;
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--c);
+  box-sizing: border-box;
+}
+.nn-key i.ring {
+  background: none;
+  border: 3px solid var(--c);
+}
+.nn-key i.miss {
+  background: var(--c);
+  box-shadow: 0 0 0 1.5px #0b101c, 0 0 0 3.5px #fff;
+}
+.nn-key i.bar {
+  width: 16px;
+  height: 4px;
+  border-radius: 2px;
+}
+.nn-key i.thin {
+  width: 16px;
+  height: 2px;
+  border-radius: 2px;
+}
+.nn-key i.pulse {
+  width: 9px;
+  height: 9px;
+  box-shadow: 0 0 8px var(--c);
+}
+.nn-key i.stick {
+  width: 2px;
+  height: 12px;
+  border-radius: 1px;
+  margin: 0 4.5px;
+}
+.label3d.nn-val {
+  font: 600 11px/1.25 var(--font-mono);
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(5, 8, 16, 0.78);
+  border-color: var(--line);
+  color: var(--ink);
+}
+.label3d.nn-val.dim {
+  color: var(--ink-2);
+  background: rgba(5, 8, 16, 0.6);
+}
+.nn-stat-key {
+  display: inline-block;
+  width: 10px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--c);
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.nn-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+}

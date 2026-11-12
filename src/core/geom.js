@@ -194,7 +194,7 @@ export function halo(color, size = 1, opacity = 0.6, k = 1.5) {
 }
 
 /**
- * Point cloud with per-point colour and size, round soft points.
+ * Point cloud with per-point color and size, round soft points.
  * positions: Float32Array(n*3); colors: Float32Array(n*3) (linear, may be HDR); sizes: Float32Array(n) in world units.
  */
 export function points(positions, colors, sizes, o = {}) {
@@ -237,7 +237,7 @@ export function points(positions, colors, sizes, o = {}) {
   return pts;
 }
 
-/** InstancedMesh with a per-instance colour buffer ready to use. */
+/** InstancedMesh with a per-instance color buffer ready to use. */
 export function instanced(geometry, material, count) {
   const mesh = new THREE.InstancedMesh(geometry, material, count);
   mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
@@ -251,7 +251,7 @@ const _m = new THREE.Matrix4();
 const _q = new THREE.Quaternion();
 const _p = new THREE.Vector3();
 const _s = new THREE.Vector3();
-/** Write position / scale (and optionally colour) of instance i. Call `flushInst(mesh)` when done. */
+/** Write position / scale (and optionally color) of instance i. Call `flushInst(mesh)` when done. */
 export function setInst(mesh, i, x, y, z, sx = 1, sy = sx, sz = sx, color) {
   _m.compose(_p.set(x, y, z), _q.identity(), _s.set(sx, sy, sz));
   mesh.setMatrixAt(i, _m);
@@ -262,7 +262,7 @@ export function flushInst(mesh) {
   if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
 }
 
-/** Infinite-looking holographic grid floor that fades out with distance from its centre. */
+/** Infinite-looking holographic grid floor that fades out with distance from its center. */
 export function gridFloor(o = {}) {
   const size = o.size ?? 80;
   const mat = new THREE.ShaderMaterial({
