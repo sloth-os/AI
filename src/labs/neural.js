@@ -590,7 +590,7 @@ export async function enter(ctx) {
     evalTimer = 0;
   }
 
-  // ---- surface: recomputed a few rows per frame, then eased towards the new heights
+  // ---- surface: recomputed a few rows per frame, then eased toward the new heights
   const target = new Float32Array(V * V).fill(0.5);
   const shown = new Float32Array(V * V).fill(0.5);
   const q = new Float64Array(2);

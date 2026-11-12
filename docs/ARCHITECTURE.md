@@ -111,19 +111,39 @@ tokens live in `src/style.css` (`--accent`, `--ink`, `--ink-2`, `--ink-3`, `--li
 each step's `enter()` so the scene can reconfigure itself. See `src/labs/optim.js`, the reference
 implementation of a lab: math in `src/ml/optim.js`, scene + controls in the lab file.
 
+## Shared scene kits
+
+Three modules carry most of the scenery, so that chapters stay about their content:
+
+* `src/core/gallery.js`: pods on a wall or a ring, for chapters that are a menu of experiences
+  (Labs, Performance).
+* `src/core/flowgraph.js`: a batched 3D node-link diagram with typed nodes, directed edges, moving
+  packets, floor zones and "exhibits" (token chips, tensors, images, JSON cards). The Data Flow and
+  Deploy chapters are data (`src/data/pipelines.js`, `src/data/deployments.js`) drawn by this kit.
+* `src/chapters/hot-vignettes.js`: one procedural scene per hot issue. A vignette is
+  `build({ ctx, issue, low }) -> { group, panel, update(dt) }`; it stands on a floor at y = 0,
+  faces +z, and reads every figure it displays out of the issue's dated facts with `figure()`.
+
 ## Testing
 
 ```
 npm run dev                                   # http://127.0.0.1:5173
 node tools/shot.mjs '#/labs/optim?s=4' shots/optim.png --q low --wait 3000
 node tools/shot.mjs '#/hot' shots/hot.png --eval 'document.querySelector(".btn.primary").click()'
+npm run smoke                                 # every route, in one headless session
 npm run test:ml                               # numerical checks of src/ml against reference values
 ```
 
 `tools/shot.mjs` drives headless Chromium (software WebGL), prints console errors, exits non-zero
 if the page threw, and saves a screenshot. `--q low|medium|high` selects the rendering quality,
 `--size 390x844` a viewport, `--eval` runs a snippet before the screenshot (`window.__atlas` is the
-App instance).
+App instance). Software rendering is slow, so animations barely advance while it waits; to see a
+later state, step the chapter yourself:
+`--eval '(async()=>{const c=__atlas.current.ctrl;for(let i=0;i<200;i++){c.update(0.05,0);await null}})()'`.
+
+`tools/smoke.mjs` visits every route and deep link (about 80), steps each chapter through twenty
+seconds of animation and fails if anything logged an error. Both tools need Playwright, which is
+not a dependency of the site; `--base http://127.0.0.1:4173/` points them at `npm run preview`.
 
 ## Regenerating the models
 

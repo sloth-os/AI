@@ -102,7 +102,7 @@ with torch.no_grad():
     wid = cols.sum(1).float()
     box = torch.maximum(hgt, wid)
     print(
-        f"centre of mass (pixel-centre coordinates): x {xs.mean():.3f}, y {ys.mean():.3f}; "
+        f"center of mass (pixel-center coordinates): x {xs.mean():.3f}, y {ys.mean():.3f}; "
         f"longer side of the ink box: mean {box.mean():.2f}, max {box.max():.0f}",
         flush=True,
     )
@@ -110,7 +110,7 @@ with torch.no_grad():
 
 
 def to_input(u8):
-    """uint8 images -> float tensor N x 1 x 28 x 28 in [0, 1] (no mean / std normalisation)."""
+    """uint8 images -> float tensor N x 1 x 28 x 28 in [0, 1] (no mean / std normalization)."""
     return u8.float().div_(255.0).unsqueeze(1)
 
 

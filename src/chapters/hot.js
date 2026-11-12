@@ -18,8 +18,8 @@ import { VIGNETTES } from './hot-vignettes.js';
 const US_SPELLING = {
   organization: 'organization', center: 'center', weaponise: 'weaponize', reorganized: 'reorganized',
   recognize: 'recognize', quantization: 'quantization', 'pre-emption': 'preemption', practise: 'practice',
-  medallists: 'medalists', license: 'license', labeled: 'labeled', labeling: 'labeling', defense: 'defense',
-  offense: 'offense', criticising: 'criticizing', catalog: 'catalog', authorized: 'authorized',
+  medalists: 'medalists', license: 'license', labeled: 'labeled', labeling: 'labeling', defense: 'defense',
+  offense: 'offense', criticizing: 'criticizing', catalog: 'catalog', authorized: 'authorized',
   authorization: 'authorization',
 };
 const US_RE = new RegExp(Object.keys(US_SPELLING).join('|'), 'gi');
@@ -153,7 +153,7 @@ function buildOverview(ctx, { onOpen, onHover }) {
     group.add(new THREE.Line(geo, edgeMat));
   }
 
-  // ---- sparks climbing the ramp towards rank 1
+  // ---- sparks climbing the ramp toward rank 1
   const P = ctx.quality === 'low' ? 40 : 84;
   const ppos = new Float32Array(P * 3);
   const pcol = new Float32Array(P * 3);

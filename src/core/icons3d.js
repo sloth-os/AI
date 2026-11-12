@@ -233,7 +233,7 @@ export const ICONS = {
     return g;
   },
 
-  /** grid world: an agent walking tiles towards a goal */
+  /** grid world: an agent walking tiles toward a goal */
   world(c) {
     const g = new THREE.Group();
     const n = 4;

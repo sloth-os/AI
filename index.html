@@ -10,6 +10,12 @@
     <meta property="og:description" content="How AI works, in an immersive 3D lab. Everything runs live in your browser." />
     <meta property="og:type" content="website" />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <style>
+      /* critical styles: the loading screen must look right before the main stylesheet arrives */
+      html, body { margin: 0; height: 100%; background: #05070d; color: #e6ecf8; font-family: system-ui, sans-serif; }
+      #boot { position: fixed; inset: 0; display: grid; place-items: center; text-align: center; }
+      #boot .mark { width: 64px; height: 64px; color: #5ad7ff; }
+    </style>
   </head>
   <body>
     <canvas id="gl" tabindex="0" aria-label="Interactive 3D scene"></canvas>

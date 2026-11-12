@@ -2,8 +2,8 @@
 
 The rules are deliberately small so that src/ml/tinygpt.js can reproduce them exactly:
 
-1. normalise(text): map curly quotes / dashes to ASCII, drop anything outside printable ASCII + "\n".
-2. pre-tokenise with PRETOKEN_RE: contractions, words/numbers/punctuation with an optional
+1. normalize(text): map curly quotes / dashes to ASCII, drop anything outside printable ASCII + "\n".
+2. pre-tokenize with PRETOKEN_RE: contractions, words/numbers/punctuation with an optional
    leading space, single whitespace characters.
 3. inside each pre-token, repeatedly merge the adjacent pair with the lowest merge rank.
 
@@ -14,20 +14,20 @@ import re
 
 EOT = "<|endoftext|>"
 PRETOKEN_RE = re.compile(r"'(?:s|t|re|ve|m|ll|d)(?![A-Za-z])| ?[A-Za-z]+| ?[0-9]+| ?[^\sA-Za-z0-9]|\s")
-_NORMALISE = {
+_NORMALIZE = {
     "“": '"', "”": '"', "‘": "'", "’": "'", "–": "-", "—": "-",
     "…": "...", " ": " ", "\x92": "'", "\x93": '"', "\x94": '"', "\t": " ", "\r": "",
 }
-_NORMALISE_RE = re.compile("|".join(re.escape(k) for k in _NORMALISE))
+_NORMALIZE_RE = re.compile("|".join(re.escape(k) for k in _NORMALIZE))
 _DROP_RE = re.compile(r"[^\x20-\x7e\n]")
 
 
-def normalise(text: str) -> str:
-    text = _NORMALISE_RE.sub(lambda m: _NORMALISE[m.group(0)], text)
+def normalize(text: str) -> str:
+    text = _NORMALIZE_RE.sub(lambda m: _NORMALIZE[m.group(0)], text)
     return _DROP_RE.sub("", text)
 
 
-def pretokenise(text: str):
+def pretokenize(text: str):
     return PRETOKEN_RE.findall(text)
 
 
@@ -118,7 +118,7 @@ class Tokenizer:
 
     def encode(self, text: str):
         ids = []
-        for word in pretokenise(normalise(text)):
+        for word in pretokenize(normalize(text)):
             ids.extend(self._bpe(word))
         return ids
 

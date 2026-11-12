@@ -444,7 +444,7 @@ export class App {
 
   /**
    * Fly so that a sphere of radius `fit` around `target` fills the free area, looking along `dir`
-   * (a vector from the target towards the camera). Returns the flight's promise.
+   * (a vector from the target toward the camera). Returns the flight's promise.
    */
   frame({ target, dir, fit }, dur = 1.2) {
     const t = v3(target).toArray();

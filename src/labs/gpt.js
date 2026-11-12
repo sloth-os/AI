@@ -30,7 +30,7 @@ function fill(el, ...kids) {
   el.replaceChildren(...kids.flat().filter((k) => k != null && k !== false).map((k) => (k.el instanceof Node ? k.el : k)));
 }
 
-/** Text printed flat on a surface (it does not turn towards the camera), replaceable through set(). */
+/** Text printed flat on a surface (it does not turn toward the camera), replaceable through set(). */
 function faceText(parent, x, y, z, opts) {
   let mesh = null;
   let cur = null;

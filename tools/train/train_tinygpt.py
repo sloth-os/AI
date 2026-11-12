@@ -7,7 +7,7 @@ Outputs:
   tinygpt.bin         JSON header + float16 weights
   tinygpt-vocab.json  BPE vocabulary, merges and encode() test vectors for the JS port
   tinygpt-eval.json   held-out token ids + PyTorch reference loss (used by the JS parity test
-                      and by the in-browser quantisation experiment)
+                      and by the in-browser quantization experiment)
 """
 import argparse
 import json
@@ -21,12 +21,12 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from bpe import EOT, Tokenizer, normalise, pretokenise, train_bpe
+from bpe import EOT, Tokenizer, normalize, pretokenize, train_bpe
 
 p = argparse.ArgumentParser()
 p.add_argument("--data", required=True)
 p.add_argument("--out", required=True)
-p.add_argument("--work", default=None, help="cache dir for tokenised data / checkpoints")
+p.add_argument("--work", default=None, help="cache dir for tokenized data / checkpoints")
 p.add_argument("--minutes", type=float, default=60)
 p.add_argument("--vocab", type=int, default=2048)
 p.add_argument("--d", type=int, default=128)
@@ -50,7 +50,7 @@ os.makedirs(args.out, exist_ok=True)
 # ----------------------------------------------------------------------------- data
 def read_stories(path, drop_first=False, drop_last=False):
     text = open(path, encoding="utf-8", errors="replace").read()
-    stories = [normalise(s).strip() for s in text.split(EOT)]
+    stories = [normalize(s).strip() for s in text.split(EOT)]
     if drop_first:
         stories = stories[1:]
     if drop_last:
@@ -71,7 +71,7 @@ if not (os.path.exists(tok_path) and os.path.exists(train_path) and os.path.exis
 
     freq = collections.Counter()
     for s in train_stories:
-        freq.update(pretokenise(s))
+        freq.update(pretokenize(s))
     print(f"unique pre-tokens: {len(freq)} ({time.time() - t0:.0f}s)", flush=True)
     vocab, merges = train_bpe(freq, args.vocab)
     json.dump({"vocab": vocab, "merges": merges}, open(tok_path, "w"))
@@ -86,7 +86,7 @@ if not (os.path.exists(tok_path) and os.path.exists(train_path) and os.path.exis
 
     np.save(train_path, encode_all(train_stories))
     np.save(val_path, encode_all(val_stories))
-    print(f"tokenised in {time.time() - t0:.0f}s", flush=True)
+    print(f"tokenized in {time.time() - t0:.0f}s", flush=True)
 
 tj = json.load(open(tok_path))
 tok = Tokenizer(tj["vocab"], tj["merges"])

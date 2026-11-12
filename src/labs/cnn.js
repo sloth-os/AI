@@ -1221,7 +1221,7 @@ export async function enter(ctx) {
       }
       layoutScanner();
 
-      // output bars ease towards the probabilities
+      // output bars ease toward the probabilities
       const shown = fanClass();
       for (let c = 0; c < CLASSES; c++) {
         const b = bars[c];

@@ -89,7 +89,7 @@ export const HOT = [
       { when: '3 Sep 2026', text: 'GPT-6 Astra is OpenAI’s “first model to reach the Critical level of cybersecurity capability”; it was released first to vetted defenders.', src: 'https://deploymentsafety.openai.com/gpt-6-astra' },
       { when: '3 Sep 2026', text: 'Indirect prompt injection still succeeded against Astra in 8.5% of scenarios when the attacker got 15 attempts (27.0% for its predecessor). Better, not solved.', src: 'https://deploymentsafety.openai.com/gpt-6-astra' },
       { when: '28 Sep 2026', text: 'The UK AI Security Institute found that, with safeguards switched off, Astra completed out-of-scope supply-chain attacks in 29.2% of simulated runs (6.3% for GPT-5.6 Sol).', src: 'https://arxiv.org/abs/2609.38415v1' },
-      { when: '8 Sep 2026', text: 'CISA, the NSA and the FBI warned that six China-based companies had extracted “billions of tokens” from US models in order to distil them.', src: 'https://www.cisa.gov/news-events/news/cisa-nsa-and-fbi-warn-china-based-ai-companies-targeting-us-ai-models-industrial-scale-knowledge' },
+      { when: '8 Sep 2026', text: 'CISA, the NSA and the FBI warned that six China-based companies had extracted “billions of tokens” from US models in order to distill them.', src: 'https://www.cisa.gov/news-events/news/cisa-nsa-and-fbi-warn-china-based-ai-companies-targeting-us-ai-models-industrial-scale-knowledge' },
     ],
     approaches: ['Staged access: defenders first', 'Least-privilege tools, sandboxes, human approval for irreversible actions', 'Classifiers on inputs, outputs and tool results', 'Designs that keep untrusted text away from the planning model', 'Treating agent logs as security-critical'],
     open: ['Can injection success be pushed low enough for unattended agents?', 'Who gains more from capable cyber models: defenders or attackers?'],
@@ -141,7 +141,7 @@ export const HOT = [
     what: 'The bottleneck has moved from generating results to verifying them, attributing credit, and making sure humans still understand what was found.',
     facts: [
       { when: '6 Oct 2026', text: 'OpenAI released roughly 720 manuscripts on some 370 open problems from an unreleased model. About half came with machine-checkable Lean proofs; three were retracted within a day and most remain unverified.', src: 'https://en.wikipedia.org/wiki/OpenAI_bulk_release_of_mathematical_papers' },
-      { when: '11 Sep 2026', text: 'At least 25 Fields medallists signed an open letter criticising rushed announcements of AI proofs.', src: 'https://techcrunch.com/2026/09/11/openais-feud-with-mathematicians-is-only-escalating/' },
+      { when: '11 Sep 2026', text: 'At least 25 Fields medalists signed an open letter criticizing rushed announcements of AI proofs.', src: 'https://techcrunch.com/2026/09/11/openais-feud-with-mathematicians-is-only-escalating/' },
       { when: '11 Nov 2026', text: 'DeepMind’s AlphaGenome 2 identified about 30% of causal genetic variants on one benchmark, against 16% for its predecessor. Research use only.', src: 'https://deepmind.google/blog/alphagenome-2-deciphering-how-cells-read-dna-to-better-understand-disease/' },
       { when: 'Oct 2026', text: 'Google reports that its diagnostic system AMIE matched doctors’ final differential diagnosis 90% of the time in real primary-care visits (published in The Lancet).', src: 'https://blog.google/innovation-and-ai/technology/ai/google-ai-updates-october-2026/' },
     ],

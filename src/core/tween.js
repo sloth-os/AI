@@ -25,7 +25,7 @@ export const smoothstep = (a, b, v) => {
   const t = clamp((v - a) / (b - a));
   return t * t * (3 - 2 * t);
 };
-/** Frame-rate independent exponential approach: value moves towards target with time constant `tau` seconds. */
+/** Frame-rate independent exponential approach: value moves toward target with time constant `tau` seconds. */
 export const damp = (value, target, tau, dt) => target + (value - target) * Math.exp(-dt / Math.max(tau, 1e-4));
 
 export class TweenGroup {

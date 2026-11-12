@@ -420,7 +420,7 @@ export class MLP {
   }
 
   /**
-   * Choose the next mini-batch of a data set with n rows: afterwards it is order[from .. to). The
+   * Choose the next mini-batch of a data set with n rows: afterward it is order[from .. to). The
    * network walks through a shuffled order and reshuffles at the end of every epoch.
    */
   nextBatch(n) {

@@ -170,7 +170,7 @@ export async function enter(ctx) {
       const ex = exhibits[i];
       buildLabels(ex);
       ex.grow = 0;
-      const dir = new THREE.Vector3(-Math.sin(ex.angle), 0.14, -Math.cos(ex.angle)); // from the exhibit towards the center
+      const dir = new THREE.Vector3(-Math.sin(ex.angle), 0.14, -Math.cos(ex.angle)); // from the exhibit toward the center
       if (fly) app.frame({ target: [ex.g.position.x, 2.6, ex.g.position.z], dir: dir.toArray(), fit: 7.1 }, 1.2);
       ctx.router.replace('perf/records/' + ex.rec.id);
     } else {

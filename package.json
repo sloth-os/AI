@@ -9,7 +9,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:ml": "node tools/test-ml.mjs",
-    "shot": "node tools/shot.mjs"
+    "shot": "node tools/shot.mjs",
+    "smoke": "node tools/smoke.mjs"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.0",
