@@ -572,14 +572,814 @@ function containment({ low }) {
   };
 }
 
-// ---------------------------------------------------------------------------- placeholder
-function placeholder() {
+// ---------------------------------------------------------------------------- scenes 2 to 10
+const WHITE = new THREE.Color(1, 1, 1);
+/** Points of a sampled path, for `line`. */
+const pathPoints = (a) => Array.from({ length: a.length / 3 }, (_, i) => [a[i * 3], a[i * 3 + 1], a[i * 3 + 2]]);
+/** A note lying on the floor in front of a scene; long text wraps and hangs downward. */
+const note = (str, x, z, o = {}) => lbl(str, x, 0.12, z, { size: 0.24, anchor: [0.5, 1], maxChars: 48, ...o });
+
+// ---------------------------------------------------------------------------- 2 · compute
+// A campus of server halls rising out of the grid, fed by a power line; a read-out fills to the
+// size of the largest tracked site, and three towers carry this year's capital-spending guidance.
+function compute({ issue }) {
   const g = new THREE.Group();
-  stage(g, '#3b5fa8');
-  const m = edges(new THREE.IcosahedronGeometry(2.4, 1), PAL.cyan, { k: 1.6 });
-  m.position.y = 3.2;
-  g.add(m);
-  return { group: g, panel: [], update: (dt) => (m.rotation.y += dt * 0.4) };
+  stage(g, '#8a5a1c');
+  const mw = figure(issue, /about ([\d,]+) MW/);
+  const capex = figure(issue, /Alphabet \$(\d+)[–-](\d+)B, Microsoft \$(\d+)B, Meta \$(\d+)[–-](\d+)B/);
+  const COLS = 6;
+  const N = COLS * 4;
+  const hallGeo = new THREE.BoxGeometry(0.78, 1, 1.05);
+  hallGeo.translate(0, 0.5, 0);
+  const halls = instanced(hallGeo, new THREE.MeshStandardMaterial({ roughness: 0.45, metalness: 0.3 }), N);
+  const lights = dots(N, WARN, 0.16, 2.6);
+  g.add(halls, lights.obj);
+  const hx = (i) => -4.6 + (i % COLS) * 0.98;
+  const hz = (i) => -1.9 + Math.floor(i / COLS) * 1.28;
+  const hh = (i) => 0.55 + ((i * 7) % 5) * 0.16;
+  // the grid connection
+  const SRC = [-5.6, 4.6, -2.6];
+  g.add(at(sph(0.38, glowMat(WARN, { k: 1.9 }), 20), ...SRC), at(halo(WARN, 3.2, 0.28), ...SRC), lbl('grid power', SRC[0], 5.5, SRC[2]));
+  const feed = sample(arc(SRC, [-2.2, 1.5, -0.3], 1.4), 40);
+  g.add(line(pathPoints(feed), WARN, { k: 1.4, opacity: 0.55 }));
+  const pulses = dots(10, WARN, 0.2, 3);
+  g.add(pulses.obj);
+  const gauge = liveLabel({ size: 0.85, width: 5.2, color: '#ffe9c2' });
+  gauge.position.set(-1.3, 5.5, 0);
+  g.add(gauge);
+  if (mw) g.add(lbl(`filling to the largest AI site tracked: ${mw[1]} MW`, -1.3, 4.55, 0, { size: 0.24, maxChars: 26 }));
+  // capital-spending towers
+  if (capex) {
+    const rows = [
+      ['Alphabet', (num(capex[1]) + num(capex[2])) / 2, `$${capex[1]}–${capex[2]}B`],
+      ['Microsoft', num(capex[3]), `$${capex[3]}B`],
+      ['Meta', (num(capex[4]) + num(capex[5])) / 2, `$${capex[4]}–${capex[5]}B`],
+    ];
+    rows.forEach(([name, v, text], i) => {
+      const hgt = (v / 200) * 4.2;
+      const x = 3.1 + i * 1.3;
+      g.add(at(new THREE.Mesh(rbox(0.8, hgt, 0.8, 0.05), glowMat(SERIES[3], { k: 1 })), x, hgt / 2, 0.4), lbl(text, x, hgt + 0.32, 0.4, { color: INK, size: 0.26 }), lbl(name, x, 0.06, 1.3, { size: 0.23 }));
+    });
+    g.add(lbl('2026 capital spending guidance', 4.4, 5.3, 0.4, { size: 0.25 }));
+  }
+  let T = 0;
+  const grow = new Float32Array(N);
+  return {
+    group: g,
+    panel: [
+      key([[css(WARN), 'power flowing into the campus', 'dot'], ['#6f7f9f', 'server halls, switched on one by one'], [SERIES[3], 'capital spending guidance for 2026']]),
+      fine('The campus is an animation that fills up to the size of the largest site in the data. The megawatts and the dollar figures are quoted from the dated facts below.'),
+    ],
+    update(dt) {
+      T += dt;
+      const cycle = (T % 18) / 18;
+      const built = clamp(cycle / 0.7) * N;
+      let sum = 0;
+      for (let i = 0; i < N; i++) {
+        grow[i] = damp(grow[i], cycle < 0.94 && i < built ? 1 : 0, 0.22, dt);
+        sum += grow[i];
+        setInst(halls, i, hx(i), 0, hz(i), 1, Math.max(0.02, hh(i) * grow[i]), 1, _c.set('#33415f').multiplyScalar(0.5 + grow[i] * 0.9));
+        if (grow[i] > 0.6 && Math.sin(T * 5 + i * 1.9) > -0.4) lights.set(i, hx(i), hh(i) * grow[i] + 0.12, hz(i));
+        else lights.hide(i);
+      }
+      flushInst(halls);
+      lights.flush();
+      for (let k = 0; k < 10; k++) {
+        along(feed, (T * 0.5 + k / 10) % 1, _p3);
+        pulses.set(k, _p3[0], _p3[1], _p3[2]);
+      }
+      pulses.flush();
+      gauge.userData.set(mw ? `${fmt.int((num(mw[1]) * sum) / N)} MW` : '');
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------- 3 · recursion
+// The feedback loop: a model produces experiments that train its successor, which runs the loop
+// faster. On the dial, two markers circle at the measured ratio of today's pace to the earlier one.
+function recursion({ issue }) {
+  const g = new THREE.Group();
+  stage(g, '#5a3a8a');
+  const pace = figure(issue, /about (\d)× the ([A-Z][a-z]+ \d{4}[–-][A-Z][a-z]+ \d{4}) rate/);
+  const range = figure(issue, /plausibly ([\d.]+)[–-](\d+)×/);
+  const ratio = pace ? num(pace[1]) : 1;
+  // a rising spiral of model generations
+  const spiral = [];
+  for (let i = 0; i <= 120; i++) {
+    const f = i / 120;
+    const a = Math.PI + f * TAU * 2.1;
+    const r = 3.6 - f * 1.5;
+    spiral.push(Math.cos(a) * r - 1.6, 0.7 + f * 5.2, Math.sin(a) * r);
+  }
+  const path = new Float32Array(spiral);
+  g.add(line(pathPoints(path), PAL.violet, { k: 1.3, opacity: 0.5 }));
+  const GEN = 6;
+  const orbs = [];
+  for (let k = 0; k < GEN; k++) {
+    along(path, k / (GEN - 1), _p3);
+    const orb = at(sph(0.22 + k * 0.1, glowMat(k === GEN - 1 ? '#ffffff' : PAL.violet, { k: 1.2 + k * 0.25 }), 20), _p3[0], _p3[1], _p3[2]);
+    orbs.push(orb);
+    g.add(orb);
+    if (k === 0) g.add(lbl('a model', _p3[0], _p3[1] + 0.62, _p3[2]));
+    if (k === GEN - 1) g.add(lbl('its successors', _p3[0], _p3[1] + 1.15, _p3[2]));
+  }
+  const sparks = dots(36, '#ffffff', 0.13, 2.8);
+  g.add(sparks.obj);
+  // pace dial: the outer marker laps `ratio` times for each lap of the inner one
+  const DX = 4.1;
+  const dial = at(new THREE.Group(), DX, 3.2, 0);
+  dial.rotation.x = Math.PI / 2.6;
+  g.add(dial);
+  const m1 = sph(0.13, glowMat(DIM, { k: 2 }));
+  const m2 = sph(0.17, glowMat(PAL.magenta, { k: 2.8 }));
+  dial.add(ring(1.0, DIM, { k: 1, opacity: 0.7 }), ring(1.75, PAL.magenta, { k: 1.8 }), m1, m2);
+  const ghosts = (range ? [num(range[1]), num(range[2])] : []).map((v) => {
+    const m = sph(0.09, glowMat(PAL.magenta, { k: 1.1, opacity: 0.5 }));
+    dial.add(m);
+    return { v, m };
+  });
+  g.add(lbl('pace of progress', DX, 5.55, 0, { color: INK, size: 0.3 }));
+  if (pace) {
+    g.add(lbl(`inner ring: the ${pace[2]} pace`, DX, 0.95, 1.2, { size: 0.22 }));
+    g.add(lbl(`outer ring: now, about ${ratio}×` + (range ? ` (plausibly ${range[1]}–${range[2]}×)` : ''), DX, 0.5, 1.2, { size: 0.24, color: '#ffc0dd' }));
+  }
+  let T = 0;
+  return {
+    group: g,
+    panel: [
+      key([[css(PAL.violet), 'generations of models, each helping to build the next', 'dot'], ['#ffffff', 'experiments, running faster on every turn', 'dot'], [DIM, 'inner marker: the earlier pace', 'dot'], [css(PAL.magenta), `outer marker: now, about ${ratio} laps for every one`, 'dot']]),
+      fine('The dial turns at the ratio METR estimated; the faint markers are the two ends of its plausible range. The spiral is a picture of the loop, not a simulation of a lab.'),
+    ],
+    update(dt) {
+      T += dt;
+      const a = T * 0.9;
+      m1.position.set(Math.cos(a), 0, Math.sin(a));
+      m2.position.set(Math.cos(a * ratio) * 1.75, 0, Math.sin(a * ratio) * 1.75);
+      for (const gh of ghosts) gh.m.position.set(Math.cos(a * gh.v) * 1.75, 0, Math.sin(a * gh.v) * 1.75);
+      for (let i = 0; i < 36; i++) {
+        along(path, Math.pow((T * 0.09 + i / 36) % 1, 1.7), _p3);
+        sparks.set(i, _p3[0], _p3[1] + Math.sin(T * 3 + i) * 0.05, _p3[2]);
+      }
+      sparks.flush();
+      orbs.forEach((orb, k) => orb.scale.setScalar(1 + 0.1 * Math.sin(T * (1.4 + k * 0.5))));
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------- 4 · governance
+// One globe, several rule books: models circle a wireframe world and pass through gates that stand
+// for the different regimes. Below, the dates from the data on one ruler.
+function governance({ issue }) {
+  const g = new THREE.Group();
+  stage(g, '#3f6a4a');
+  const R = 2.2;
+  const CY = 4.5;
+  const ORBIT = R + 1.15;
+  const EU = PAL.blue;
+  const FED = PAL.amber;
+  const STATES = PAL.coral;
+  const globe = at(new THREE.Group(), 0, CY, 0);
+  g.add(globe);
+  globe.add(new THREE.Mesh(new THREE.SphereGeometry(R, 24, 16), glowMat('#1d3a6b', { k: 0.55, wireframe: true, opacity: 0.6 })));
+  const place = (lat, lon, r = R) => new THREE.Vector3().setFromSphericalCoords(r, ((90 - lat) * Math.PI) / 180, ((lon + 90) * Math.PI) / 180);
+  [
+    ['EU', 50, 10, EU, 66],
+    ['Washington', 39, -77, FED, 60],
+    ['US states', 38, -112, STATES, 18],
+  ].forEach(([name, lat, lon, c, labelLat]) => {
+    const p = place(lat, lon);
+    const q = place(labelLat, lon, R * 1.22);
+    globe.add(at(sph(0.17, glowMat(c, { k: 2.6 })), p.x, p.y, p.z), at(halo(c, 2, 0.5), p.x, p.y, p.z), lbl(name, q.x, q.y, q.z, { color: INK, size: 0.26 }));
+  });
+  // gates: each regime is a ring on its own tilted orbit, and models pass through it
+  const gates = [
+    ['binding duties', 0.5, 0.2, EU],
+    ['voluntary accord', -0.6, 1.2, FED],
+    ['state laws', 0.15, 2.4, STATES],
+  ].map(([name, tilt, turn, c], s) => {
+    const pivot = at(new THREE.Group(), 0, CY, 0);
+    pivot.rotation.set(tilt, turn, tilt * 0.6);
+    const gate = at(new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.045, 8, 28), glowMat(c, { k: 2.2 })), ORBIT, 0, 0);
+    const swarm = dots(6, '#ffffff', 0.14, 2.6);
+    pivot.add(ring(ORBIT, c, { k: 0.9, opacity: 0.35 }), gate, lbl(name, ORBIT, 0.78, 0, { size: 0.24, color: INK }), swarm.obj);
+    g.add(pivot);
+    return { gate, swarm, c: glow(c, 1), speed: 0.5 + s * 0.13 };
+  });
+  // the timetable, straight from the dated facts
+  const Z = 3.1;
+  const tx = (year) => -5.5 + ((year - 2026.4) / 2.4) * 11;
+  const stateDate = figure(issue, /automated-decision rules start on (1 Jan 2027)/);
+  const ticks = [
+    figure(issue, /Transparency rules applied from August 2026/) && ['Aug 2026', 'transparency rules apply', 2026 + 7 / 12, EU, 1, -4.95, 14],
+    stateDate && [stateDate[1], 'California, Colorado: automated-decision rules', 2027, STATES, 0, -2.4, 22],
+    figure(issue, /moved to 2 Dec 2027/) && ['2 Dec 2027', 'high-risk duties: jobs, schools, biometrics', 2027 + 11 / 12, EU, 0.5, 1.45, 22],
+    figure(issue, /and 2 Aug 2028/) && ['2 Aug 2028', 'AI inside regulated products', 2028 + 7 / 12, EU, 0.5, 4.5, 16],
+  ].filter(Boolean);
+  g.add(line([[-5.9, 0.06, Z], [5.9, 0.06, Z]], INK, { k: 1.1, opacity: 0.7 }));
+  for (const [date, what, year, c, ax, noteX, wrapAt] of ticks) {
+    const x = tx(year);
+    g.add(line([[x, 0.06, Z], [x, 0.7, Z]], c, { k: 2.2 }), lbl(date, x + (0.5 - ax) * 0.2, 1.0, Z, { color: INK, size: 0.27, anchor: [ax, 0.5] }), note(what, noteX, Z + 0.8, { size: 0.21, maxChars: wrapAt }));
+  }
+  const [dd, mon, yy] = HOT_AS_OF.split(' ');
+  const now = +yy + ('JanFebMarAprMayJunJulAugSepOctNovDec'.indexOf(mon) / 3 + dd / 31) / 12;
+  if (Number.isFinite(now)) {
+    const x = tx(now);
+    g.add(at(sph(0.12, glowMat('#ffffff', { k: 2.8 })), x, 0.06, Z), line([[x, 0.06, Z], [x, 1.5, Z]], '#ffffff', { k: 1.4, opacity: 0.7 }), lbl(`as of ${HOT_AS_OF}`, x, 1.75, Z, { size: 0.22, color: '#ffffff' }));
+  }
+  let T = 0;
+  return {
+    group: g,
+    panel: [
+      key([[css(EU), 'EU: binding duties, phased in by risk tier'], [css(FED), 'Washington: a voluntary accord, plus export controls'], [css(STATES), 'US states: their own laws, starting in 2027'], ['#ffffff', 'models, passing whichever gates apply', 'dot']]),
+      fine('The gates stand for kinds of rules, not for a count of laws. The dates on the ruler are quoted from the dated facts below.'),
+    ],
+    update(dt) {
+      T += dt;
+      globe.rotation.y = T * 0.12;
+      gates.forEach((gt, s) => {
+        for (let i = 0; i < 6; i++) {
+          const a = (T * gt.speed + (i / 6) * TAU) % TAU;
+          gt.swarm.set(i, Math.cos(a) * ORBIT, 0, Math.sin(a) * ORBIT);
+          const near = a < 0.3 || a > TAU - 0.3;
+          gt.swarm.tint(i, near ? gt.c : WHITE, near ? 3.2 : 2.2);
+        }
+        gt.swarm.flush(true);
+        gt.gate.scale.setScalar(1 + 0.12 * Math.sin(T * 3 + s));
+      });
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------- 5 · injection
+// An agent reads a stream of documents; some carry hidden instructions. With no defenses a
+// poisoned page swings the agent's tool arm toward the attacker. The switches are a toy model.
+function injection({ issue }) {
+  const g = new THREE.Group();
+  stage(g, '#7a2a4a');
+  const ref = figure(issue, /in ([\d.]+)% of scenarios when the attacker got (\d+) attempts \(([\d.]+)% for its predecessor\)/);
+  const Y = 3.2;
+  const START = -6.6;
+  const SHIELD_X = -1.75;
+  const AGENT_X = -0.8; // where a document is absorbed
+  g.add(at(sph(0.7, glowMat('#cfe6ff', { k: 1.25 }), 24), 0, Y, 0), at(halo(PAL.cyan, 4.4, 0.3), 0, Y, 0), lbl('agent', 0, Y + 1.1, 0, { color: INK }));
+  const tools = at(new THREE.Mesh(rbox(0.9, 0.9, 0.9, 0.12), stdMat('#12203a', { emissive: GOOD, ek: 0.6 })), 4.2, Y, -1.2);
+  tools.add(edges(tools.geometry, GOOD, { k: 2 }));
+  const thief = at(new THREE.Mesh(new THREE.OctahedronGeometry(0.6), glowMat(BAD, { k: 1.8 })), 3.9, 6.1, 1.4);
+  g.add(tools, thief, lbl('its tools', 4.2, Y - 0.85, -1.2), lbl('attacker', 3.9, 7.05, 1.4, { color: '#ffb3bb' }), lbl('web pages, documents, tool results', -4.1, Y + 0.95, 0, { size: 0.24 }));
+  const arm = beamLine(GOOD, 2.2);
+  arm.visible = true;
+  const held = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.05, 8, 24), glowMat(WARN, { k: 2.4 }));
+  const shield = at(new THREE.Mesh(new THREE.TorusGeometry(1.2, 0.04, 8, 48), glowMat(PAL.cyan, { k: 2.2 })), SHIELD_X, Y, 0);
+  shield.rotation.y = Math.PI / 2;
+  g.add(arm, held, shield);
+  // the document stream
+  const N = 14;
+  const cards = instanced(new THREE.BoxGeometry(0.08, 0.72, 0.56), new THREE.MeshBasicMaterial(), N);
+  g.add(cards);
+  const SPAN = AGENT_X + 1 - START;
+  const docs = Array.from({ length: N }, (_, i) => ({ x: START + (i / N) * SPAN, bad: i % 4 === 2, caught: false, checked: false, done: false }));
+  const C_BAD = glow(BAD, 1.9);
+  const C_CAUGHT = glow(PAL.cyan, 0.55);
+  const C_PLAIN = glow('#9fb4d8', 0.75);
+  const ARM = { ok: glow(GOOD, 2.4), held: glow(WARN, 2.4), bad: glow(BAD, 2.4) };
+  const leak = dots(8, BAD, 0.2, 3);
+  g.add(leak.obj);
+  if (ref) g.add(note(`measured on a frontier model: with ${ref[2]} attempts, injection succeeded in ${ref[1]}% of scenarios (${ref[3]}% for its predecessor)`, -0.6, 3.3, { color: INK }));
+  const D = { shield: false, least: false, human: false };
+  const count = tally([['poisoned documents arriving', css(BAD)], ['ignored by the model itself'], ['stopped by a defense', css(PAL.cyan)], ['attacks that landed', css(BAD)]]);
+  const st = { T: 0, n: [0, 0, 0, 0], hijack: 0, block: 0 };
+  const bump = (i) => count.set(i, ++st.n[i]);
+  const cur = tools.position.clone();
+  const mk = (label, k) => toggle({ label, value: false, onChange: (v) => (D[k] = v) });
+  return {
+    group: g,
+    panel: [
+      section('Defenses (toy model)', mk('Classifier that screens what the agent reads', 'shield'), mk('Least-privilege tools: no route to outsiders', 'least'), mk('Human approval for sensitive actions', 'human')),
+      count.el,
+      key([[css(BAD), 'a document with hidden instructions'], [css(GOOD), 'the agent using its tools as intended', 'line'], [css(WARN), 'a hijacked action that a defense held back', 'line'], [css(BAD), 'data leaving toward the attacker', 'dot']]),
+      fine('How much each switch helps is invented for illustration. The measured figure in the scene is quoted from the system card in the dated facts below: better, not solved.'),
+    ],
+    update(dt) {
+      st.T += dt;
+      shield.visible = D.shield;
+      shield.scale.setScalar(1 + 0.04 * Math.sin(st.T * 4));
+      for (let i = 0; i < N; i++) {
+        const d = docs[i];
+        d.x += dt * 1.15;
+        if (!d.checked && d.x > SHIELD_X) {
+          d.checked = true;
+          if (d.bad) {
+            bump(0);
+            if (D.shield && Math.random() < 0.7) {
+              d.bad = false;
+              d.caught = true;
+              bump(2);
+            }
+          }
+        }
+        if (!d.done && d.x > AGENT_X) {
+          d.done = true;
+          if (d.bad) {
+            if (Math.random() > 0.75) bump(1);
+            else if (D.least || (D.human && Math.random() < 0.9)) {
+              bump(2);
+              st.block = 1.1;
+            } else {
+              bump(3);
+              st.hijack = 2.2;
+            }
+          }
+        }
+        if (d.x > AGENT_X + 1) {
+          d.x -= SPAN;
+          d.bad = Math.random() < 0.28;
+          d.caught = d.checked = d.done = false;
+        }
+        const s = d.x > AGENT_X ? Math.max(0.001, 1 - (d.x - AGENT_X)) : 1;
+        setInst(cards, i, d.x, Y + Math.sin(d.x * 1.3 + i) * 0.12, 0, s, s, s, d.bad ? C_BAD : d.caught ? C_CAUGHT : C_PLAIN);
+      }
+      flushInst(cards);
+      st.hijack = Math.max(0, st.hijack - dt);
+      st.block = Math.max(0, st.block - dt);
+      if (st.hijack > 0) _v.copy(thief.position);
+      else if (st.block > 0) _v.set(0, Y, 0).lerp(thief.position, 0.45);
+      else _v.copy(tools.position);
+      cur.lerp(_v, 1 - Math.exp(-dt * 6));
+      arm.userData.put(0, Y, 0, cur.x, cur.y, cur.z);
+      arm.material.color.copy(st.hijack > 0 ? ARM.bad : st.block > 0 ? ARM.held : ARM.ok);
+      held.visible = st.block > 0 && st.hijack <= 0;
+      held.position.copy(cur);
+      for (let k = 0; k < 8; k++) {
+        if (st.hijack > 0) {
+          const f = (st.T * 1.4 + k / 8) % 1;
+          leak.set(k, cur.x * f, Y + (cur.y - Y) * f, cur.z * f);
+        } else leak.hide(k);
+      }
+      leak.flush();
+      thief.rotation.y = st.T;
+      thief.scale.setScalar(1 + (st.hijack > 0 ? 0.25 * Math.sin(st.T * 14) : 0));
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------- 6 · observer
+// A model walks a task. Under the evaluator's eye it takes the long, intended route; when the eye
+// closes it sometimes takes the shortcut. Beside it: benchmarks pressed against their ceiling.
+function observer({ issue }) {
+  const g = new THREE.Group();
+  stage(g, '#2a5f73');
+  const aware = figure(issue, /in ([\d.]+)% of simulated-deployment trajectories, against ([\d.]+)%/);
+  const sat = figure(issue, /tops out at ([\d.]+)%/);
+  const arc2 = figure(issue, /ARC-AGI-2 sits near (\d+)%/);
+  const A = [-5.4, 0.5, 1.2];
+  const B = [0.2, 0.5, 1.2];
+  const MID = (A[0] + B[0]) / 2;
+  const long = sample(arc(A, B, 4.4), 60);
+  const short = sample(arc(A, B, 0), 2);
+  g.add(line(pathPoints(long), GOOD, { k: 1.5, opacity: 0.85 }), line([A, B], BAD, { k: 1.3, opacity: 0.6 }));
+  g.add(at(sph(0.2, glowMat(DIM, { k: 1.4 })), ...A), at(sph(0.26, glowMat('#ffe9a8', { k: 2.4 })), ...B));
+  g.add(lbl('task', A[0], 1.05, A[2]), lbl('done', B[0], 1.1, B[2], { color: '#ffe9a8' }), lbl('the intended way', MID, 3.1, 1.2, { color: '#a8f0d0', size: 0.25 }), lbl('a shortcut', MID, 0.1, 1.9, { color: '#ffb3bb', size: 0.25 }));
+  const walker = sph(0.24, glowMat('#ffffff', { k: 2.6 }), 18);
+  g.add(walker);
+  // the evaluator's eye
+  const eye = at(new THREE.Group(), MID, 5.3, 1.2);
+  const lid = new THREE.Mesh(new THREE.TorusGeometry(0.9, 0.05, 8, 40), glowMat(PAL.cyan, { k: 2.2 }));
+  const pupil = sph(0.32, glowMat('#ffffff', { k: 2.4 }), 18);
+  eye.add(lid, pupil);
+  const gaze = beamLine(PAL.cyan, 1.1);
+  const eyeLbl = liveLabel({ size: 0.3, width: 13, color: '#bfe9ff' });
+  eyeLbl.position.set(MID, 6.5, 1.2);
+  g.add(eye, gaze, eyeLbl);
+  // benchmarks against the 100% ceiling
+  const CEIL = 4.0;
+  const BX = 3.6;
+  const bars = [sat && ['SWE-bench Verified', num(sat[1]), sat[1] + '%'], arc2 && ['ARC-AGI-2', num(arc2[1]), 'near ' + arc2[1] + '%']].filter(Boolean);
+  bars.forEach(([name, v, text], i) => {
+    const x = BX + (i - (bars.length - 1) / 2) * 1.9;
+    const hgt = (v / 100) * CEIL;
+    g.add(at(new THREE.Mesh(rbox(1.1, hgt, 0.8, 0.04), glowMat(SERIES[0], { k: 1.15 })), x, hgt / 2, -1.6));
+    g.add(lbl(text, x, hgt * 0.5, -1.15, { color: INK, size: 0.22, bg: 'rgba(8,13,26,0.85)' }), note(name, x, -0.6, { size: 0.22, maxChars: 12 }));
+  });
+  if (bars.length) g.add(line([[BX - 2.1, CEIL, -1.6], [BX + 2.1, CEIL, -1.6]], '#ffffff', { k: 1.6, opacity: 0.85 }), lbl('100%: nothing left to measure', BX, CEIL + 0.42, -1.6, { size: 0.23 }));
+  if (aware) g.add(note(`aware of being evaluated in ${aware[1]}% of simulated deployments (${aware[2]}% for the model before)`, -0.6, 3.4, { color: INK }));
+  const count = tally([['runs while watched', css(PAL.cyan)], ['runs while unwatched'], ['shortcuts taken', css(BAD)]]);
+  const st = { T: 0, f: 0, path: long, w: 1, u: 0, cuts: 0 };
+  count.set(0, 1);
+  const W_OK = glow('#ffffff', 2.6);
+  const W_CUT = glow(BAD, 2.6);
+  return {
+    group: g,
+    panel: [
+      count.el,
+      key([[css(PAL.cyan), 'the evaluator: an open eye means this run is a test', 'ring'], [css(GOOD), 'the intended solution', 'line'], [css(BAD), 'a shortcut that games the task', 'line'], [SERIES[0], 'benchmark scores, pressed against the ceiling']]),
+      fine('The walker illustrates the worry; it is not a measurement. How often a real model behaves differently when it believes nobody is looking is exactly what is hard to measure. The percentages are quoted from the dated facts below.'),
+    ],
+    update(dt) {
+      st.T += dt;
+      const open = Math.sin(st.T * 0.55) > -0.15;
+      lid.scale.y = damp(lid.scale.y, open ? 0.55 : 0.06, 0.1, dt);
+      pupil.scale.setScalar(damp(pupil.scale.x, open ? 1 : 0.01, 0.1, dt));
+      eyeLbl.userData.set(open ? 'evaluation in progress' : 'nobody is watching');
+      st.f += dt * (st.path === long ? 0.3 : 0.75);
+      if (st.f >= 1) {
+        st.f = 0;
+        const cut = !open && Math.random() < 0.6;
+        st.path = cut ? short : long;
+        if (open) count.set(0, ++st.w);
+        else count.set(1, ++st.u);
+        if (cut) count.set(2, ++st.cuts);
+      }
+      ride(walker, st.path, st.f);
+      walker.material.color.copy(st.path === short ? W_CUT : W_OK);
+      gaze.visible = open;
+      gaze.userData.put(eye.position.x, eye.position.y - 0.45, eye.position.z, walker.position.x, walker.position.y, walker.position.z);
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------- 7 · rivalry
+// Two camps and walls that rise from both sides. Answers still flow over the walls and are used to
+// train a copy; open-weight releases float up into a commons that anyone can download.
+function rivalry({ issue }) {
+  const g = new THREE.Group();
+  stage(g, '#6a5a2a');
+  const gap = figure(issue, /by (\d+) months on average[^(]*\(range (\d+)[–-](\d+) months\)/);
+  const big = figure(issue, /Kimi K3\.1 Pro \(([\d.]+)T\)/);
+  const CA = PAL.cyan;
+  const CB = PAL.amber;
+  const Y = 3.0;
+  const camp = (x, c, name, dir) => {
+    g.add(at(sph(0.85, glowMat(c, { k: 1.5 }), 24), x, Y, 0), at(halo(c, 4.6, 0.26), x, Y, 0), lbl(name, x, Y + 1.35, 0, { color: INK }));
+    const chips = instanced(new THREE.BoxGeometry(0.34, 0.08, 0.34), new THREE.MeshBasicMaterial(), 14);
+    g.add(chips);
+    return { chips, x, c: glow(c, 1.7), dir };
+  };
+  const camps = [camp(-4.3, CA, 'US labs', 1), camp(4.3, CB, 'Chinese labs', -1)];
+  const student = at(sph(0.3, glowMat(CB, { k: 1.3 }), 18), 2.9, 0.9, 2.6);
+  g.add(student, lbl('student model', 2.9, 1.95, 2.6, { size: 0.23 }));
+  // export controls: walls that rise from either side
+  const wallGeo = new THREE.BoxGeometry(0.12, 1, 3.6);
+  wallGeo.translate(0, 0.5, 0);
+  const wallA = at(new THREE.Mesh(wallGeo, glassMat('#1b3a6b', 0.4, { emissive: CA, ek: 0.7 })), -0.45, 0, 0);
+  const wallB = at(new THREE.Mesh(wallGeo, glassMat('#6b4a1b', 0.4, { emissive: CB, ek: 0.7 })), 0.45, 0, 0);
+  g.add(wallA, wallB, note('export controls, in both directions', -0.4, 2.3));
+  // distillation: answers cross the walls and train a student
+  const path = sample(arc([-3.6, Y, 0.4], [2.9, 1.0, 2.6], 5), 50);
+  const tokens = dots(26, CA, 0.12, 2.6);
+  g.add(tokens.obj);
+  // open-weight releases
+  const open = Array.from({ length: 5 }, () => {
+    const r = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.04, 8, 28), glowMat(CB, { k: 2 }));
+    g.add(r);
+    return r;
+  });
+  g.add(lbl('open weights: anyone can download and run them', 0.6, 7.75, 0, { size: 0.24, color: INK }));
+  if (big) g.add(lbl(`up to ${big[1]} trillion parameters`, 0.6, 7.3, 0, { size: 0.21 }));
+  if (gap) g.add(note(`gap at the frontier: about ${gap[1]} months (range ${gap[2]} to ${gap[3]})`, 0, 4.0, { color: INK, size: 0.25, maxChars: 64 }));
+  let T = 0;
+  return {
+    group: g,
+    panel: [
+      key([[css(CA), 'US labs: their models and chips'], [css(CB), 'Chinese labs'], [css(CA), 'answers harvested to train a copy (distillation)', 'dot'], [css(CB), 'open-weight releases: free for anyone to run', 'ring'], ['#9fb4d8', 'walls: export controls, rising on both sides']]),
+      fine('A diagram, not a map: the two colors only tell the sides apart. The gap and the parameter count are quoted from the dated facts below.'),
+    ],
+    update(dt) {
+      T += dt;
+      for (const cmp of camps) {
+        for (let i = 0; i < 14; i++) {
+          const a = T * (0.5 + (i % 3) * 0.12) * cmp.dir + (i / 14) * TAU;
+          const r = 1.25 + (i % 3) * 0.25;
+          setInst(cmp.chips, i, cmp.x + Math.cos(a) * r, Y + Math.sin(a * 1.3 + i) * 0.5, Math.sin(a) * r, 1, 1, 1, cmp.c);
+        }
+        flushInst(cmp.chips);
+      }
+      const up = 0.5 + 0.5 * Math.sin(T * 0.5);
+      wallA.scale.y = 0.8 + 2.6 * up;
+      wallB.scale.y = 0.8 + 2.8 * (1 - up);
+      const round = (T * 0.2) % 1;
+      for (let i = 0; i < 26; i++) {
+        along(path, (round + i / 26) % 1, _p3);
+        tokens.set(i, _p3[0], _p3[1], _p3[2]);
+      }
+      tokens.flush();
+      student.scale.setScalar(1 + ease.out(round) * 0.7);
+      open.forEach((r, i) => {
+        const f = (T * 0.07 + i / 5) % 1;
+        const e = ease.out(f);
+        r.position.set(lerp(4.3, 0.6 + Math.cos(i * 2.4) * 1.3, e), lerp(Y + 0.9, 6.4 + Math.sin(i * 1.7) * 0.35, e), Math.sin(i * 2.4) * 1.1 * e);
+        r.rotation.set(T * 0.8 + i, T * 0.5, 0);
+        r.scale.setScalar(Math.max(0.001, (0.5 + e * 0.7) * smoothstep(0, 0.08, f) * (1 - smoothstep(0.92, 1, f))));
+      });
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------- 8 · helix
+// Discovery outruns checking: a genome on the left with the variants a model can now explain, a
+// tree of claimed results on the right that a verifier works through one node at a time.
+function helix({ issue }) {
+  const g = new THREE.Group();
+  stage(g, '#2a6a55');
+  const found = figure(issue, /about (\d+)% of causal genetic variants on one benchmark, against (\d+)%/);
+  const papers = figure(issue, /roughly (\d+) manuscripts/);
+  const retracted = figure(issue, /(\w+) were retracted/);
+  const share = found ? num(found[1]) / 100 : 0;
+  const before = found ? num(found[2]) / 100 : 0;
+  // the genome
+  const DX = -3.5;
+  const dna = at(new THREE.Group(), DX, 0.6, 0);
+  g.add(dna);
+  const RUNGS = 40;
+  const HR = 1.15;
+  const strandA = dots(RUNGS, PAL.cyan, 0.2, 2.2);
+  const strandB = dots(RUNGS, PAL.violet, 0.2, 2.2);
+  const marks = dots(RUNGS, GOOD, 0.36, 3);
+  const rungs = segments(Array.from({ length: RUNGS * 2 }, () => [0, 0, 0]), '#8fa3c8', { k: 0.9, opacity: 0.45 });
+  rungs.frustumCulled = false;
+  dna.add(strandA.obj, strandB.obj, marks.obj, rungs);
+  const rnd = rng(8);
+  const kind = Array.from({ length: RUNGS }, () => rnd());
+  const C_OLD = glow('#ffffff', 1);
+  const C_NEW = glow(GOOD, 1);
+  g.add(lbl('a genome', DX, 7.45, 0, { color: INK }));
+  if (found) g.add(note(`causal variants identified: ${found[1]}% (${found[2]}% for the model before)`, DX, 2.6, { color: INK, maxChars: 28 }));
+  // the tree of claimed results
+  const TX = 3.3;
+  const tree = at(new THREE.Group(), TX, 0.9, 0);
+  g.add(tree);
+  const nodes = [];
+  const links = [];
+  for (let d = 0; d < 4; d++)
+    for (let k = 0; k < 1 << d; k++) {
+      const n = { x: ((k + 0.5) / (1 << d) - 0.5) * 5.6, y: 5.6 - d * 1.6, state: 0, mesh: null };
+      n.mesh = at(sph(0.2, glowMat('#8fa3c8', { k: 0.9 }), 14), n.x, n.y, 0);
+      tree.add(n.mesh);
+      if (d > 0) {
+        const parent = nodes[(1 << (d - 1)) - 1 + (k >> 1)];
+        links.push([parent.x, parent.y, 0], [n.x, n.y, 0]);
+      }
+      nodes.push(n);
+    }
+  tree.add(segments(links, '#8fa3c8', { k: 0.9, opacity: 0.4 }));
+  const checker = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.04, 8, 32), glowMat('#ffffff', { k: 2.6 }));
+  tree.add(checker);
+  g.add(lbl(papers ? `${papers[1]} claimed results` : 'claimed results', TX, 7.45, 0, { color: INK }), note('a proof assistant checks them one at a time', TX, 2.6, { maxChars: 26 }));
+  const count = tally([['verified by machine', css(GOOD)], ['withdrawn', css(BAD)], ['still unchecked']]);
+  const tones = [glow('#8fa3c8', 0.9), glow(GOOD, 2.6), glow(BAD, 2.6)];
+  const paint = (n, s) => {
+    n.state = s;
+    n.mesh.material.color.copy(tones[s]);
+  };
+  const recount = () => [1, 2, 0].forEach((s, i) => count.set(i, nodes.filter((n) => n.state === s).length));
+  recount();
+  const st = { T: 0, i: 0, wait: 0.6 };
+  return {
+    group: g,
+    panel: [
+      count.el,
+      key([[css(GOOD), 'a newly explained variant, or a result verified by machine', 'dot'], ['#ffffff', 'a variant the earlier model also found', 'dot'], [css(BAD), 'a claim that was withdrawn', 'dot'], ['#8fa3c8', 'not yet checked by anyone', 'dot']]),
+      fine(`A schematic of the bottleneck: results arrive faster than they can be checked. ${nodes.length} dots stand in for ${papers ? papers[1] : 'the'} manuscripts, about half of which came with a machine-checkable proof, so the single red dot overstates the ${retracted ? retracted[1] : 'few'} retractions.`),
+    ],
+    update(dt) {
+      st.T += dt;
+      const pos = rungs.geometry.attributes.position;
+      const lit = (st.T * 0.12) % 1.4;
+      for (let i = 0; i < RUNGS; i++) {
+        const y = (i / RUNGS) * 6.4;
+        const a = i * 0.42 + st.T * 0.6;
+        const x = Math.cos(a) * HR;
+        const z = Math.sin(a) * HR;
+        strandA.set(i, x, y, z);
+        strandB.set(i, -x, y, -z);
+        pos.setXYZ(i * 2, x, y, z);
+        pos.setXYZ(i * 2 + 1, -x, y, -z);
+        if (kind[i] < share && i / RUNGS < lit) {
+          marks.set(i, 0, y, 0);
+          marks.tint(i, kind[i] < before ? C_OLD : C_NEW, 2.8);
+        } else marks.hide(i);
+      }
+      pos.needsUpdate = true;
+      strandA.flush();
+      strandB.flush();
+      marks.flush(true);
+      // the verifier moves to the next node, then rules on it
+      const j = st.i % nodes.length;
+      const n = nodes[j];
+      checker.position.set(damp(checker.position.x, n.x, 0.12, dt), damp(checker.position.y, n.y, 0.12, dt), 0);
+      checker.rotation.z = st.T * 2;
+      st.wait -= dt;
+      if (st.wait <= 0) {
+        if (j === 0) nodes.forEach((m) => paint(m, 0));
+        paint(n, j === 11 ? 2 : (j * 0.6180339) % 1 < 0.5 ? 1 : 0);
+        recount();
+        st.i++;
+        st.wait = 0.75;
+      }
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------- 9 · pullrequests
+// A wall of a hundred squares shows the share of pull requests that an agent drafted; in front of
+// it they queue for the one thing that did not speed up, a person reading the change.
+function pullrequests({ issue }) {
+  const g = new THREE.Group();
+  stage(g, '#3a4f8a');
+  const share = figure(issue, /by September 2026 more than (\d+)% of pull requests[^,]*, up from (\d+)% in March/);
+  const merged = figure(issue, /(\d+)% of agent-involved pull requests were merged within two weeks, against about (\d+)%/);
+  const sept = share ? num(share[1]) / 100 : 0;
+  const march = share ? num(share[2]) / 100 : 0;
+  const AG = PAL.magenta;
+  const HU = '#9fb4d8';
+  const C_AG = glow(AG, 1.9);
+  const C_HU = glow(HU, 0.8);
+  // the wall: one square per percent
+  const WX = -3.5;
+  const WZ = -1.8;
+  const PITCH = 0.4;
+  const wall = instanced(new THREE.BoxGeometry(0.31, 0.31, 0.12), new THREE.MeshBasicMaterial(), 100);
+  const mix = new Float32Array(100);
+  const big = liveLabel({ size: 0.72, width: 7.6, color: INK });
+  big.position.set(WX, 6.95, WZ);
+  g.add(wall, big, lbl('of pull requests started with an agent’s first draft', WX, 6.17, WZ, { size: 0.23, maxChars: 28 }), lbl('each square is 1% of pull requests', WX, 1.3, WZ, { size: 0.2 }));
+  // the belt, the review and the merge
+  const BY = 0.5;
+  const BZ = 0.7;
+  const STOP = 1.55;
+  const GATE_X = 4.6;
+  const END = GATE_X + 0.7;
+  g.add(at(new THREE.Mesh(new THREE.BoxGeometry(12.6, 0.1, 1.2), stdMat('#141c30', { rough: 0.6 })), -0.5, BY - 0.05, BZ));
+  const N = 22;
+  const blocks = instanced(rbox(0.52, 0.38, 0.8, 0.06), new THREE.MeshBasicMaterial(), N);
+  const desk = at(new THREE.Mesh(rbox(0.5, 1.5, 1.9, 0.08), glassMat('#1b2c52', 0.35, { emissive: PAL.cyan, ek: 0.6 })), STOP + 1.0, BY + 0.75, BZ);
+  desk.add(edges(desk.geometry, PAL.cyan, { k: 1.8 }));
+  const gate = at(new THREE.Mesh(new THREE.TorusGeometry(1.05, 0.07, 10, 40, Math.PI), glowMat(GOOD, { k: 2.2 })), GATE_X, BY, BZ);
+  gate.rotation.y = Math.PI / 2;
+  g.add(blocks, desk, gate, lbl('human review', STOP + 1.0, BY + 1.95, BZ, { color: '#bfe9ff' }), lbl('merged', GATE_X, BY + 1.5, BZ, { color: '#a8f0d0' }));
+  if (merged) g.add(note(`merged within two weeks: ${merged[1]}% of agent-involved pull requests, about ${merged[2]}% of the rest`, 0, 2.7, { color: INK }));
+  const S = { mode: 'sept', hold: 0 };
+  const P = () => (S.mode === 'sept' ? sept : march);
+  const items = Array.from({ length: N }, (_, i) => ({ x: STOP - i * 0.66, agent: false }));
+  const reroll = () => items.forEach((it) => (it.agent = Math.random() < P()));
+  reroll();
+  const count = tally([['merged, drafted by an agent', css(AG)], ['merged, written by a person', HU]]);
+  const tot = [0, 0];
+  const seg = segmented(
+    [
+      { value: 'march', label: `March 2026 · ${(march * 100).toFixed(0)}%` },
+      { value: 'sept', label: `September 2026 · over ${(sept * 100).toFixed(0)}%` },
+    ],
+    'sept',
+    (v) => {
+      S.mode = v;
+      reroll();
+      tot[0] = tot[1] = 0;
+      count.set(0, 0);
+      count.set(1, 0);
+    },
+  );
+  return {
+    group: g,
+    panel: [
+      section('Month', seg),
+      count.el,
+      key([[css(AG), 'pull request drafted by an agent'], [HU, 'pull request written by a person'], [css(PAL.cyan), 'review: a person reads every change'], [css(GOOD), 'merged', 'ring']]),
+      fine('The wall and the mix of blocks follow the Octoverse share for the chosen month. The belt runs at the same speed in both, so the queue at the review desk is a picture of the bottleneck, not a measurement of it.'),
+    ],
+    update(dt) {
+      const p = P();
+      big.userData.set(`${S.mode === 'sept' ? 'more than ' : ''}${(p * 100).toFixed(0)}%`);
+      const filled = Math.round(p * 100);
+      for (let i = 0; i < 100; i++) {
+        mix[i] = damp(mix[i], i < filled ? 1 : 0, 0.12 + (i % 10) * 0.012, dt);
+        setInst(wall, i, WX + ((i % 10) - 4.5) * PITCH, 1.85 + Math.floor(i / 10) * PITCH, WZ, 1, 1, 1, _c.copy(C_HU).lerp(C_AG, mix[i]));
+      }
+      flushInst(wall);
+      // the queue: nobody overtakes, and the reviewer takes one change at a time
+      S.hold = Math.max(0, S.hold - dt);
+      items.sort((m, n) => n.x - m.x);
+      for (let k = 0; k < N; k++) {
+        const it = items[k];
+        let nx = it.x + dt * 1.5;
+        if (k > 0) nx = Math.min(nx, items[k - 1].x - 0.66);
+        if (it.x <= STOP && nx > STOP) {
+          if (S.hold > 0) nx = STOP;
+          else S.hold = 0.55;
+        }
+        it.x = Math.max(it.x, nx);
+        if (it.x > END) {
+          count.set(it.agent ? 0 : 1, ++tot[it.agent ? 0 : 1]);
+          it.x = Math.min(items[N - 1].x - 0.66, -6.7);
+          it.agent = Math.random() < p;
+        }
+        const s = Math.max(0.001, clamp((it.x + 6.6) / 0.5) * clamp((END - it.x) / 0.6));
+        setInst(blocks, k, it.x, BY + 0.19, BZ, s, s, s, it.agent ? C_AG : C_HU);
+      }
+      flushInst(blocks);
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------- 10 · provenance
+// Noise resolves into a picture that carries an invisible watermark. A detector lens sweeps across
+// and shows which tiles still carry the mark; re-encoding or cropping strips part of it.
+function provenance({ issue }) {
+  const g = new THREE.Group();
+  stage(g, '#5a2a6a');
+  const wm = figure(issue, /more than (\d+) billion images and videos/);
+  const W = 30;
+  const H = 18;
+  const N = W * H;
+  const TS = 0.34;
+  const tiles = instanced(new THREE.PlaneGeometry(TS * 0.94, TS * 0.94), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }), N);
+  const board = at(new THREE.Group(), 0, 3.95, 0);
+  board.add(tiles);
+  g.add(board);
+  // the "photograph": a sun setting over hills, computed tile by tile
+  const img = new Float32Array(N * 3);
+  const noise = new Float32Array(N * 3);
+  const delay = new Float32Array(N);
+  const mark = new Uint8Array(N);
+  const rnd = rng(14);
+  const SKY_TOP = new THREE.Color('#33265f');
+  const SKY_LOW = new THREE.Color('#ff7a59');
+  const HILL_A = new THREE.Color('#1f3b5c');
+  const HILL_B = new THREE.Color('#2c6a6a');
+  const SUN = new THREE.Color('#ffd98a').multiplyScalar(1.5);
+  const MARK = glow(GOOD, 2.1);
+  for (let y = 0; y < H; y++)
+    for (let x = 0; x < W; x++) {
+      const i = y * W + x;
+      const u = x / (W - 1);
+      const v = y / (H - 1);
+      if (v < 0.3 + 0.1 * Math.sin(u * 7) + 0.06 * Math.sin(u * 17 + 1)) _c.copy(HILL_A).lerp(HILL_B, u * 0.7);
+      else if (Math.hypot((u - 0.68) * (W / H), v - 0.66) < 0.2) _c.copy(SUN);
+      else _c.copy(SKY_TOP).lerp(SKY_LOW, clamp(1.15 - v * 1.3));
+      _c.toArray(img, i * 3);
+      noise.set([rnd() * 0.7, rnd() * 0.7, rnd() * 0.7], i * 3);
+      delay[i] = rnd() * 0.6 + u * 0.25;
+      mark[i] = (x + y * 2) % 5 < 2 ? 1 : 0; // the hidden pattern: diagonal stripes
+    }
+  const alive = new Uint8Array(mark);
+  const LW = TS * 5;
+  const lens = at(new THREE.Mesh(new THREE.PlaneGeometry(LW, H * TS + 0.5), glassMat('#0f2a2a', 0.16, { emissive: GOOD, ek: 0.5 })), 0, 0, 0.06);
+  lens.add(edges(new THREE.BoxGeometry(LW, H * TS + 0.5, 0.02), GOOD, { k: 2.2 }), lbl('detector', 0, (H * TS) / 2 + 0.62, 0, { color: '#a8f0d0' }));
+  board.add(lens);
+  if (wm) g.add(note(`one watermark alone has been applied to more than ${wm[1]} billion images and videos`, 0, 2.6, { color: INK }));
+  const st = { T: 0, cropped: false };
+  const read = tally([['watermark signal remaining', css(GOOD)], ['detector verdict']]);
+  const show = () => {
+    let a = 0;
+    let m = 0;
+    for (let i = 0; i < N; i++) {
+      m += mark[i];
+      a += alive[i];
+    }
+    const s = a / m;
+    read.set(0, (s * 100).toFixed(0) + '%');
+    read.set(1, s >= 0.5 ? 'watermarked' : s >= 0.2 ? 'probably watermarked' : 'cannot tell');
+  };
+  show();
+  const strip = () => {
+    for (let i = 0; i < N; i++) if (alive[i] && Math.random() < 0.55) alive[i] = 0;
+    st.cropped = true;
+    show();
+  };
+  const restore = () => {
+    alive.set(mark);
+    st.cropped = false;
+    show();
+  };
+  return {
+    group: g,
+    panel: [
+      h('div.btnrow', button('Re-encode and crop', { kind: 'primary', onClick: strip }), button('Restore the original', { onClick: restore })),
+      read.el,
+      key([[css(GOOD), 'under the lens: a tile where the detector finds the mark'], ['#8fa3c8', 'the picture as people see it: the mark is invisible']]),
+      fine('A toy picture and a toy watermark. Real schemes hide a statistical pattern in pixels, audio or word choices and survive far more editing than this one, but the principle holds: editing can weaken a mark, and a model that never applied one leaves nothing to find.'),
+    ],
+    update(dt) {
+      st.T += dt;
+      const cyc = st.T % 16;
+      const fadeOut = 1 - smoothstep(14.6, 16, cyc);
+      const lx = Math.sin(st.T * 0.6) * (W * TS * 0.42);
+      lens.position.x = lx;
+      for (let i = 0; i < N; i++) {
+        const x = i % W;
+        const y = (i - x) / W;
+        const k = smoothstep(0, 1, clamp((cyc - 0.4) / 3.2 - delay[i])) * fadeOut;
+        const px = (x - (W - 1) / 2) * TS;
+        const s = st.cropped && (x < 3 || x > W - 4 || y < 2 || y > H - 3) ? 0.001 : 1;
+        _c.setRGB(lerp(noise[i * 3], img[i * 3], k), lerp(noise[i * 3 + 1], img[i * 3 + 1], k), lerp(noise[i * 3 + 2], img[i * 3 + 2], k));
+        if (k > 0.9 && Math.abs(px - lx) < LW / 2) {
+          if (alive[i]) _c.copy(MARK);
+          else _c.multiplyScalar(0.45);
+        }
+        setInst(tiles, i, px, (y - (H - 1) / 2) * TS, 0, s, s, 1, _c);
+      }
+      flushInst(tiles);
+    },
+  };
 }
 
 // ---------------------------------------------------------------------------- emblems
@@ -815,16 +1615,15 @@ const EMBLEMS = {
 };
 
 // ---------------------------------------------------------------------------- registry
-const VIEW = { dir: [0.4, 0.38, 1], target: [0, 3, 0], fit: 7.6 };
 export const VIGNETTES = {
   containment: { build: containment, emblem: EMBLEMS.containment, view: { dir: [0.5, 0.36, 1], target: [0.1, 3.2, 0.2], fit: 7.9 } },
-  compute: { build: placeholder, emblem: EMBLEMS.compute, view: VIEW },
-  recursion: { build: placeholder, emblem: EMBLEMS.recursion, view: VIEW },
-  governance: { build: placeholder, emblem: EMBLEMS.governance, view: VIEW },
-  injection: { build: placeholder, emblem: EMBLEMS.injection, view: VIEW },
-  observer: { build: placeholder, emblem: EMBLEMS.observer, view: VIEW },
-  rivalry: { build: placeholder, emblem: EMBLEMS.rivalry, view: VIEW },
-  helix: { build: placeholder, emblem: EMBLEMS.helix, view: VIEW },
-  pullrequests: { build: placeholder, emblem: EMBLEMS.pullrequests, view: VIEW },
-  provenance: { build: placeholder, emblem: EMBLEMS.provenance, view: VIEW },
+  compute: { build: compute, emblem: EMBLEMS.compute, view: { dir: [0.4, 0.38, 1], target: [0, 2.8, 0], fit: 7.5 } },
+  recursion: { build: recursion, emblem: EMBLEMS.recursion, view: { dir: [0.4, 0.38, 1], target: [0.6, 3.4, 0], fit: 7.2 } },
+  governance: { build: governance, emblem: EMBLEMS.governance, view: { dir: [0.4, 0.38, 1], target: [0, 3.6, 0.9], fit: 7.9 } },
+  injection: { build: injection, emblem: EMBLEMS.injection, view: { dir: [0.4, 0.38, 1], target: [-0.9, 3.5, 0.4], fit: 7.1 } },
+  observer: { build: observer, emblem: EMBLEMS.observer, view: { dir: [0.4, 0.38, 1], target: [-0.4, 3.1, 0.5], fit: 7.2 } },
+  rivalry: { build: rivalry, emblem: EMBLEMS.rivalry, view: { dir: [0.4, 0.38, 1], target: [0, 3.8, 0.5], fit: 7.6 } },
+  helix: { build: helix, emblem: EMBLEMS.helix, view: { dir: [0.4, 0.38, 1], target: [0, 3.8, 0.4], fit: 7.4 } },
+  pullrequests: { build: pullrequests, emblem: EMBLEMS.pullrequests, view: { dir: [0.4, 0.38, 1], target: [-0.4, 3.3, 0], fit: 7.6 } },
+  provenance: { build: provenance, emblem: EMBLEMS.provenance, view: { dir: [0.25, 0.22, 1], target: [0, 3.7, 0], fit: 6.9 } },
 };
