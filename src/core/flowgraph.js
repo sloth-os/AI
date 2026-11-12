@@ -5,7 +5,7 @@
 //
 // Everything a graph draws lives under `graph.group` and is batched: one instanced mesh for the node
 // bodies, one mesh for all glyphs / edge tubes / arrowheads, one line set for the outlines, and one
-// instanced mesh for the packets. Highlighting re-tints vertex-colour ranges, so a graph costs about
+// instanced mesh for the packets. Highlighting re-tints vertex-color ranges, so a graph costs about
 // five draw calls plus its labels no matter how many nodes it has.
 import * as THREE from 'three';
 import { SERIES, glow, seq, div, withAlpha } from './colors.js';
@@ -15,7 +15,7 @@ import { damp, clamp } from './tween.js';
 
 // ------------------------------------------------------------------ vocabulary
 
-/** Node roles. The colour identifies the role everywhere: in the scene and in the panel legend. */
+/** Node roles. The color identifies the role everywhere: in the scene and in the panel legend. */
 export const ROLES = {
   client: { label: 'People and devices', color: SERIES[0] },
   service: { label: 'Services and logic', color: SERIES[6] },
@@ -57,7 +57,7 @@ const _m3 = new THREE.Matrix3();
 const _q = new THREE.Quaternion();
 const _e = new THREE.Euler();
 
-/** Growable vertex-coloured geometry whose ranges can be re-tinted after it is built. */
+/** Growable vertex-colored geometry whose ranges can be re-tinted after it is built. */
 class ColorBatch {
   constructor() {
     this.pos = [];
@@ -68,7 +68,7 @@ class ColorBatch {
     return this.pos.length / 3;
   }
 
-  /** Append a geometry (it is consumed). `shade` bakes a soft directional light into the colours. */
+  /** Append a geometry (it is consumed). `shade` bakes a soft directional light into the colors. */
   addGeometry(geo, matrix, color, shade = 0.5) {
     const g = geo.index ? geo.toNonIndexed() : geo;
     const p = g.attributes.position;
@@ -106,7 +106,7 @@ class ColorBatch {
     return g;
   }
 
-  /** Multiply the colour of `n` vertices starting at `start` by k (relative to their base colour). */
+  /** Multiply the color of `n` vertices starting at `start` by k (relative to their base color). */
   tint(start, n, k) {
     const a = this.attr.array;
     const b = this.base;
@@ -115,7 +115,7 @@ class ColorBatch {
   }
 }
 
-/** Points of a rounded rectangle centred on the origin, counter-clockwise, as [x, y] pairs. */
+/** Points of a rounded rectangle centerd on the origin, counter-clockwise, as [x, y] pairs. */
 function roundRectPts(w, h, r, seg = 5) {
   const pts = [];
   const hw = w / 2 - r;
@@ -174,7 +174,7 @@ function addTube(batch, pts, count, i0, i1, radius, color, dashed) {
 
 // ------------------------------------------------------------------ glyphs
 
-/** Tiny modelling kit: every primitive is merged into the graph's triangle batch. */
+/** Tiny modeling kit: every primitive is merged into the graph's triangle batch. */
 function makeKit(batch, origin, scale, color) {
   const base = new THREE.Matrix4().compose(origin, new THREE.Quaternion(), new THREE.Vector3(scale, scale, scale));
   const frame = new THREE.Matrix4();
@@ -377,7 +377,7 @@ export const layout = {
   line(ids, { from = [0, 0], step = [4.4, 0] } = {}) {
     return Object.fromEntries(ids.map((id, i) => [id, [from[0] + step[0] * i, from[1] + step[1] * i]]));
   },
-  /** Rows that alternate direction, so consecutive ids stay neighbours. */
+  /** Rows that alternate direction, so consecutive ids stay neighbors. */
   snake(ids, { perRow = 4, dx = 4.4, dz = 5, center = [0, 0] } = {}) {
     const rows = Math.ceil(ids.length / perRow);
     return Object.fromEntries(
@@ -776,7 +776,7 @@ export class FlowGraph {
   }
 
   /**
-   * Continuous packet streams. path: edge id or list of ids (prefix '-' to travel an edge backwards).
+   * Continuous packet streams. path: edge id or list of ids (prefix '-' to travel an edge backward).
    * Without `cycle` the packets loop forever; with cycle [period, from, to] a train of `count` packets
    * crosses the path once per period, during that fraction of it (so a response can follow a request).
    * @param {FlowSpec[]} list
@@ -934,7 +934,7 @@ export class FlowGraph {
     if (idx || this._used) flushInst(this.packets);
     this._used = idx;
 
-    // exhibits: turn towards the camera, ease in and out
+    // exhibits: turn toward the camera, ease in and out
     const list = this.exList;
     if (list.length) {
       this.group.worldToLocal(_a.copy(camera.position));
@@ -1036,7 +1036,7 @@ export class FlowGraph {
     return ex;
   }
 
-  /** World position of a node (centre of its top face). */
+  /** World position of a node (center of its top face). */
   nodeWorld(id, out = new THREE.Vector3()) {
     const n = this.nodes.get(id);
     return n ? this.group.localToWorld(out.set(n.x, n.top, n.z)) : out;
@@ -1067,7 +1067,7 @@ export class FlowGraph {
   /**
    * A camera view (for app.setView / flyFit) that frames some nodes.
    * @param {string[]} [ids] @param {{dir?:number[], pad?:number, minFit?:number, local?:boolean}} [o]
-   *        dir: viewing direction (from the target towards the camera); local: dir is given in the graph's own frame
+   *        dir: viewing direction (from the target toward the camera); local: dir is given in the graph's own frame
    */
   view(ids, o = {}) {
     const { center, radius } = this.bounds(ids);
@@ -1096,7 +1096,7 @@ const INK = '#e9eefb';
 const INK2 = '#b4bfd6';
 const INK3 = '#8390ac';
 const CODE = { key: '#9ec5f4', str: '#a8e0c4', num: '#f0c27a', bool: '#d9a6f0', special: '#8fb7ff', cite: '#f0c27a' };
-/** Decorative tints that tell neighbouring tokens / rows / requests apart (text stays neutral). */
+/** Decorative tints that tell neighboring tokens / rows / requests apart (text stays neutral). */
 export const TINTS = [SERIES[0], SERIES[2], SERIES[6], SERIES[3], SERIES[4]];
 const CHIP = new THREE.Color('#141c30');
 const EMPTY = new THREE.Color(0.028, 0.04, 0.075);
@@ -1125,7 +1125,10 @@ function canvasPlane(w, h, draw) {
   const c = document.createElement('canvas');
   c.width = Math.max(2, Math.round(w * U));
   c.height = Math.max(2, Math.round(h * U));
-  draw(c.getContext('2d'), c.width, c.height);
+  const g2 = c.getContext('2d');
+  // a hair of letter spacing switches off font ligatures, so "<|eot_id|>" and "->" are drawn literally
+  if ('letterSpacing' in g2) g2.letterSpacing = '0.01px';
+  draw(g2, c.width, c.height);
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 4;
@@ -1154,7 +1157,7 @@ function cells(count, geo = cellGeo()) {
 
 /**
  * The card every exhibit sits on: dark glass, a title on the left, the shape / dtype on the right.
- * Content coordinates: origin at the centre of the content box, x right, y up, world units.
+ * Content coordinates: origin at the center of the content box, x right, y up, world units.
  */
 function exFrame(spec, env, cw, ch, draw) {
   const titleFont = F.title(0.2 * U);
@@ -1220,7 +1223,7 @@ function overlay(fr, z, draw) {
   return pl;
 }
 
-/** Split text into coloured atoms and wrap them to a pixel width. Returns lines of [text, colour]. */
+/** Split text into colored atoms and wrap them to a pixel width. Returns lines of [text, color]. */
 function wrapRich(text, font, maxPx) {
   const lines = [];
   for (const para of String(text).split('\n')) {
@@ -1407,7 +1410,7 @@ export const EXHIBITS = {
   },
 
   /**
-   * Rows of coloured cells: one vector per row. spec: rows, cols, labels?, tints?, more? ('… 4,096'),
+   * Rows of colored cells: one vector per row. spec: rows, cols, labels?, tints?, more? ('… 4,096'),
    * mode 'div' | 'seq', shared (0..1: how alike the rows are), result? {label} adds their mean, dimRows? [i].
    */
   vectors(spec, env) {
@@ -1845,7 +1848,7 @@ export const EXHIBITS = {
     return fr;
   },
 
-  /** A code card with light syntax colouring (JSON, HTTP head lines, SSE "data:" lines). spec: code, bar?, cols?, maxLines?. */
+  /** A code card with light syntax coloring (JSON, HTTP head lines, SSE "data:" lines). spec: code, bar?, cols?, maxLines?. */
   json(spec, env) {
     const fs = spec.size ?? 0.145;
     const font = F.mono(fs * U, 500);
@@ -1977,7 +1980,7 @@ export const EXHIBITS = {
   },
 
   /**
-   * A point cloud: vectors in embedding space. spec: n, k (nearest neighbours to highlight, 0 = none),
+   * A point cloud: vectors in embedding space. spec: n, k (nearest neighbors to highlight, 0 = none),
    * links? (draw the proximity graph), note?.
    */
   scatter(spec, env) {
@@ -1995,13 +1998,13 @@ export const EXHIBITS = {
       g.fillText(spec.note, P.x(0), P.y(-ch / 2 + 0.1));
     });
     const rnd = rng((spec.seed ?? 6) * 97 + 1);
-    const centres = Array.from({ length: 6 }, () => [rnd.range(-1.3, 1.3), rnd.range(-0.7, 0.7), rnd.range(-0.45, 0.45)]);
+    const centers = Array.from({ length: 6 }, () => [rnd.range(-1.3, 1.3), rnd.range(-0.7, 0.7), rnd.range(-0.45, 0.45)]);
     const pts = [];
     for (let i = 0; i < n; i++) {
-      const c = i % centres.length;
-      pts.push([centres[c][0] + rnd.normal() * 0.24, centres[c][1] + rnd.normal() * 0.2, centres[c][2] + rnd.normal() * 0.2, c]);
+      const c = i % centers.length;
+      pts.push([centers[c][0] + rnd.normal() * 0.24, centers[c][1] + rnd.normal() * 0.2, centers[c][2] + rnd.normal() * 0.2, c]);
     }
-    const q = [centres[2][0] + 0.12, centres[2][1] - 0.05, centres[2][2] + 0.1];
+    const q = [centers[2][0] + 0.12, centers[2][1] - 0.05, centers[2][2] + 0.1];
     const d2 = (a, b) => (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2;
     const kNear = spec.k ?? 0;
     const near = kNear ? pts.map((p, i) => [d2(p, q), i]).sort((a, b) => a[0] - b[0]).slice(0, kNear).map((x) => x[1]) : [];

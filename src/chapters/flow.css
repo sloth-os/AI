@@ -1,0 +1,119 @@
+/* Data Flow chapter: pipeline picker and stage read-outs. Shared tokens come from style.css. */
+.flow-pick {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+}
+.flow-pick button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--raise);
+  color: var(--ink-2);
+  font: 600 12px/1.15 var(--font-display);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.flow-pick button .n {
+  flex: none;
+  font: 500 10px/1 var(--font-mono);
+  color: var(--ink-3);
+}
+.flow-pick button .t {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.flow-pick button:hover {
+  background: var(--raise-2);
+  color: var(--ink);
+}
+.flow-pick button.on {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  color: var(--ink);
+}
+.flow-pick button.on .n {
+  color: var(--accent);
+}
+.flow-select {
+  display: none;
+}
+.flow-tour {
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.flow-glance {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--raise);
+}
+.flow-shape {
+  padding: 0;
+  background: none;
+  font: 600 12.5px/1.4 var(--font-mono);
+  color: var(--ink);
+}
+.flow-detail {
+  display: contents;
+}
+.flow-detail .code {
+  max-height: 300px;
+}
+/* payloads are literal: no "<|" or "->" ligatures */
+.flow-detail .code,
+.flow-detail code,
+.flow-tour code {
+  font-variant-ligatures: none;
+}
+.flow-cap {
+  font: 500 11px/1.3 var(--font-mono);
+  color: var(--ink-3);
+}
+.flow-wire {
+  font: 650 13.5px/1.25 var(--font-display);
+  color: var(--ink);
+}
+.flow-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.flow-links a {
+  padding: 6px 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  color: var(--ink);
+  font: 600 11.5px/1.2 var(--font-display);
+}
+.flow-links a:hover {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  text-decoration: none;
+}
+.flow-src {
+  font-size: 11.5px;
+}
+@media (max-width: 860px) {
+  .flow-pick,
+  .flow-blurb,
+  .flow-head .lead {
+    display: none;
+  }
+  .flow-select {
+    display: block;
+  }
+  .flow-head h1 {
+    margin-bottom: 0;
+    font-size: 19px;
+  }
+  .flow-tour {
+    padding-top: 12px;
+  }
+}
