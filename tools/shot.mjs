@@ -1,5 +1,5 @@
 // Headless smoke test + screenshot of one route.
-//   node tools/shot.mjs '#/labs/gpt' shots/gpt.png [--wait 2500] [--size 1440x900] [--q low] [--eval 'js'] [--base http://127.0.0.1:5173/]
+//   node tools/shot.mjs '#/labs/gpt' shots/gpt.png [--wait 2500] [--size 1440x900] [--q low] [--eval 'js'] [--after 600] [--base http://127.0.0.1:5173/]
 // Prints console errors and exits non-zero if the page threw.
 import { createRequire } from 'node:module';
 import { mkdirSync } from 'node:fs';
@@ -19,10 +19,13 @@ const q = opt('q', 'medium');
 const base = opt('base', 'http://127.0.0.1:5173/');
 const evalJs = opt('eval', '');
 const dpr = +opt('dpr', 1);
+const after = +opt('after', 600);
 const [hash = '#/', out = 'shots/out.png'] = args;
 
 const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl'] });
 const page = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: dpr });
+page.setDefaultTimeout(300000); // software rendering on a busy machine can be very slow
+page.setDefaultNavigationTimeout(300000);
 const errors = [];
 page.on('console', (m) => {
   if (m.type() === 'error') errors.push(m.text());
@@ -35,7 +38,7 @@ await page.waitForTimeout(wait);
 if (evalJs) {
   const r = await page.evaluate(evalJs).catch((e) => 'EVAL ERROR ' + e.message);
   if (r !== undefined) console.log('eval:', typeof r === 'string' ? r : JSON.stringify(r));
-  await page.waitForTimeout(600);
+  await page.waitForTimeout(after);
 }
 mkdirSync(dirname(out), { recursive: true });
 await page.screenshot({ path: out });
