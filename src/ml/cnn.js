@@ -208,13 +208,13 @@ export function receptiveField(layer, cx, cy) {
 
 // ------------------------------------------------------------------------------- pre-processing
 const BOX = 20; // MNIST: the ink is scaled to fit a 20x20 box ...
-const CENTRE = 14.5; // ... and its centre of mass is put on the centre of pixel 14 (measured on the training set)
+const CENTER = 14.5; // ... and its center of mass is put on the center of pixel 14 (measured on the training set)
 
 /**
- * MNIST-style normalisation of a drawing.
+ * MNIST-style normalization of a drawing.
  *   1. find the bounding box of the ink,
  *   2. scale it (keeping the aspect ratio) so that its longer side is 20 pixels,
- *   3. place it in a 28x28 frame so that the centre of mass of the ink is at the centre.
+ *   3. place it in a 28x28 frame so that the center of mass of the ink is at the center.
  * Resampling is an exact area average, so thin strokes do not alias when a large pad is shrunk.
  *
  * @param {ArrayLike<number>} gray  w*h ink values (any positive scale, background 0)
@@ -251,9 +251,9 @@ export function preprocessDrawing(gray, w, h, out = new Float32Array(SIZE * SIZE
   const bw = x1 - x0 + 1;
   const bh = y1 - y0 + 1;
   const s = BOX / Math.max(bw, bh); // destination pixels per source pixel
-  // centre of mass on the centre of the frame, but never push the ink box out of the frame
-  const ox = Math.min(SIZE - (x1 + 1) * s, Math.max(-x0 * s, CENTRE - (mx / m) * s));
-  const oy = Math.min(SIZE - (y1 + 1) * s, Math.max(-y0 * s, CENTRE - (my / m) * s));
+  // center of mass on the center of the frame, but never push the ink box out of the frame
+  const ox = Math.min(SIZE - (x1 + 1) * s, Math.max(-x0 * s, CENTER - (mx / m) * s));
+  const oy = Math.min(SIZE - (y1 + 1) * s, Math.max(-y0 * s, CENTER - (my / m) * s));
 
   // separable area average: columns first (into tmp: bh rows x 28 columns), then rows
   const tmp = new Float32Array(bh * SIZE);
@@ -287,13 +287,13 @@ export function preprocessDrawing(gray, w, h, out = new Float32Array(SIZE * SIZE
 
 /**
  * Rotate (degrees, counter-clockwise on screen), scale and shift (pixels, +x right, +y down) a 28x28
- * image about its centre, with bilinear sampling. Used to test how brittle the network is.
+ * image about its center, with bilinear sampling. Used to test how brittle the network is.
  */
 export function transformImage(src, out, { angle = 0, dx = 0, dy = 0, scale = 1 } = {}) {
   const t = (-angle * Math.PI) / 180; // screen y points down
   const cos = Math.cos(t) / scale;
   const sin = Math.sin(t) / scale;
-  const c = 14; // pixel-centre coordinates of the frame centre
+  const c = 14; // pixel-center coordinates of the frame center
   for (let y = 0; y < SIZE; y++) {
     for (let x = 0; x < SIZE; x++) {
       const ux = x - c - dx;
@@ -334,7 +334,7 @@ function probes() {
     list.push({ kind, angle, patch, norm: Math.sqrt(n) });
   };
   for (let a = 0; a < 180; a += 15) {
-    // a stroke through (or one pixel beside) the centre; `a` is its direction, counter-clockwise from "pointing right"
+    // a stroke through (or one pixel beside) the center; `a` is its direction, counter-clockwise from "pointing right"
     const t = (a * Math.PI) / 180;
     for (const off of [-1, 0, 1]) add('stroke', a, (x, y) => Math.exp(-((x * Math.sin(t) + y * Math.cos(t) - off) ** 2) / (2 * 0.85 * 0.85)));
   }

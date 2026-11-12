@@ -403,7 +403,7 @@ export const LEARNERS = [
 
 /**
  * q0 is the value every action starts with. The largest return there is (the goal reward) makes
- * the learner optimistic: anything it has not tried yet looks better than what it has tried, so
+ * the learner optimiztic: anything it has not tried yet looks better than what it has tried, so
  * it tries everything at least once.
  */
 export const DEFAULT_PARAMS = { epsilon: 0.1, alpha: 0.5, gamma: 1, planning: 20, maxSteps: 400, q0: REWARD.goal };

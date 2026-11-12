@@ -827,11 +827,11 @@ export async function enter(ctx) {
     const n = scan.n;
     const cx = scan.pos % n;
     const cy = Math.floor(scan.pos / n);
-    const grid = (x0, size, cells, value, colour, label) => {
+    const grid = (x0, size, cells, value, color, label) => {
       const c = size / cells;
       for (let y = 0; y < cells; y++)
         for (let x = 0; x < cells; x++) {
-          g.fillStyle = colour(value(x, y));
+          g.fillStyle = color(value(x, y));
           g.fillRect(x0 + x * c + 1, 30 + y * c + 1, c - 2, c - 2);
         }
       g.fillStyle = '#93a1bf';

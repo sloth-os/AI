@@ -57,6 +57,10 @@ One-time setup: in the repository open **Settings → Pages → Build and deploy
 **Source** to **GitHub Actions**. Then push (or run the workflow from the Actions tab). The site
 appears at `https://<owner>.github.io/<repository>/`.
 
+The workflow deploys from the default branch and from `main`. GitHub also has to allow the branch
+in **Settings → Environments → github-pages → Deployment branches and tags**; a Deploy job that
+fails within seconds, before running any step, was rejected by that rule.
+
 ## How it is built
 
 One WebGL canvas, one camera and one render loop; chapters are lazy-loaded modules mounted into

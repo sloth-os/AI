@@ -231,7 +231,7 @@ export async function enter(ctx) {
     },
     {
       title: 'A good guess focuses the search',
-      text: '**A-star** (written A*) ranks every frontier tile by the cost paid so far plus an optimistic estimate of what is left (here the straight-line distance in tiles). It still finds the cheapest path, but stops wasting effort behind its back. Compare the “expanded” counts of the four algorithms, then try Greedy: fast, and fooled by the mud.',
+      text: '**A-star** (written A*) ranks every frontier tile by the cost paid so far plus an optimiztic estimate of what is left (here the straight-line distance in tiles). It still finds the cheapest path, but stops wasting effort behind its back. Compare the “expanded” counts of the four algorithms, then try Greedy: fast, and fooled by the mud.',
       enter: () => (setMode('plan'), algoSeg.set('astar'), (S.algo = 'astar'), (S.k = 0), renderPlan()),
     },
     {

@@ -1,8 +1,8 @@
 # Build the site on every push; publish it to GitHub Pages from the default branch.
 #
 # One-time setup: in the repository go to Settings -> Pages -> "Build and deployment"
-# and set Source to "GitHub Actions". After that every push to the default branch
-# (or a manual run from the Actions tab) deploys the site.
+# and set Source to "GitHub Actions". After that every push to the default branch or to
+# main (or a manual run from the Actions tab) deploys the site.
 name: Build and deploy to GitHub Pages
 
 on:
@@ -43,11 +43,18 @@ jobs:
       - name: Build
         run: npm run build
 
-      # Deploy only from the default branch (whatever it is called), never from pull requests.
+      # Deploy from the default branch (whatever it is called) and from main, never from pull requests.
+      # The github-pages environment must also allow the branch: Settings -> Environments ->
+      # github-pages -> Deployment branches. A Deploy job that fails within seconds without
+      # running any step was rejected by that rule.
       - name: Decide whether to deploy
         id: target
+        env:
+          EVENT: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
-          if [ "${{ github.event_name }}" != "pull_request" ] && [ "${{ github.ref_name }}" = "${{ github.event.repository.default_branch }}" ]; then
+          if [ "$EVENT" != "pull_request" ] && { [ "$REF_NAME" = "$DEFAULT_BRANCH" ] || [ "$REF_NAME" = "main" ]; }; then
             echo "deploy=true" >> "$GITHUB_OUTPUT"
           else
             echo "deploy=false" >> "$GITHUB_OUTPUT"

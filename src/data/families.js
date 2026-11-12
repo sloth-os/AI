@@ -3,7 +3,7 @@
 // year   = year of the publication named in `origin` (the earliest one we are sure of; precursors
 //          are listed in `famous`). Methods older than 1943 sit in a compressed strip on the timeline.
 // signal = where the method's knowledge comes from (see SIGNALS). Where the fit is loose,
-//          `signalNote` says why. Assigning a signal is an editorial judgement.
+//          `signalNote` says why. Assigning a signal is an editorial judgment.
 // importance 1-3 sets the node size (editorial: how central the method is to the field today).
 // links  = ids of methods this one directly builds on (always older or of the same year).
 // lab    = route(s) inside the atlas where the mechanism can be tried.
@@ -83,7 +83,7 @@ export const METHODS = [
   },
   {
     id: 'expert', name: 'Expert systems', family: 'symbolic', year: 1965, origin: 'The DENDRAL project at Stanford', signal: 'rules', importance: 3,
-    oneLine: 'Hundreds of if-then rules captured from human specialists, applied by an inference engine.',
+    oneLine: 'Hundreds of if-then rules captured from human specializts, applied by an inference engine.',
     how: 'Knowledge engineers interview experts and encode what they say as rules of the form “if these findings hold, then suspect that cause”. An inference engine chains the rules forward from the facts or backward from a hypothesis, and can show which rules led to its conclusion.',
     strengths: 'Transparent reasoning that can explain itself; works with no training data.',
     limits: 'Rules are costly to collect and maintain, and the system fails abruptly outside what it was told.',
@@ -281,7 +281,7 @@ export const METHODS = [
   },
   {
     id: 'moe', name: 'Mixture of experts', family: 'neural', year: 1991, origin: 'Jacobs, Jordan, Nowlan & Hinton, “Adaptive Mixtures of Local Experts”', signal: 'supervised', importance: 2, signalNote: ARCH_NOTE,
-    oneLine: 'Many specialist sub-networks, with a router that picks a few per input.',
+    oneLine: 'Many specializt sub-networks, with a router that picks a few per input.',
     how: 'A small gating network looks at the input and chooses which experts should handle it; only those are run. A model can therefore hold far more parameters than it uses for any single token.',
     strengths: 'More capacity for the same compute per token.',
     limits: 'All the experts must still fit in memory, and routing is hard to train evenly.',

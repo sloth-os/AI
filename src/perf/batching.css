@@ -34,7 +34,7 @@
   color: var(--ink-2);
 }
 
-/* swatch + neutral text: the text never wears the series colour */
+/* swatch + neutral text: the text never wears the series color */
 .bt-sw {
   display: inline-flex;
   align-items: center;

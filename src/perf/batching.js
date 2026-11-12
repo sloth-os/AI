@@ -126,7 +126,7 @@ export async function enter(ctx) {
     side('batch slots', SLAB_Z0 + SLAB_D / 2),
   );
 
-  // lanes (lit, dark) and bars (unlit, coloured; they glow when they are doing work)
+  // lanes (lit, dark) and bars (unlit, colored; they glow when they are doing work)
   const unitBox = new THREE.BoxGeometry(1, 1, 1);
   unitBox.translate(0.5, 0.5, 0); // grows to +x and +y from its anchor
   const tracks = instanced(unitBox, stdMat('#ffffff', { rough: 0.6, metal: 0.2 }), NS * MAX_LANES);

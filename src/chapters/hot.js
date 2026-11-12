@@ -16,11 +16,11 @@ import { VIGNETTES } from './hot-vignettes.js';
 // The data file is written in British English and the site speaks American English. This changes
 // spelling only: no fact or figure is touched, and none of these words occurs inside a quotation.
 const US_SPELLING = {
-  organisation: 'organization', centre: 'center', weaponise: 'weaponize', reorganised: 'reorganized',
-  recognise: 'recognize', quantisation: 'quantization', 'pre-emption': 'preemption', practise: 'practice',
-  medallists: 'medalists', licence: 'license', labelled: 'labeled', labelling: 'labeling', defence: 'defense',
-  offence: 'offense', criticising: 'criticizing', catalogue: 'catalog', authorised: 'authorized',
-  authorisation: 'authorization',
+  organization: 'organization', center: 'center', weaponise: 'weaponize', reorganized: 'reorganized',
+  recognize: 'recognize', quantization: 'quantization', 'pre-emption': 'preemption', practise: 'practice',
+  medallists: 'medalists', license: 'license', labeled: 'labeled', labeling: 'labeling', defense: 'defense',
+  offense: 'offense', criticising: 'criticizing', catalog: 'catalog', authorized: 'authorized',
+  authorization: 'authorization',
 };
 const US_RE = new RegExp(Object.keys(US_SPELLING).join('|'), 'gi');
 const us = (s) =>
@@ -66,7 +66,7 @@ function wrapEven(str, font, weight, maxEm) {
 }
 
 // ---------------------------------------------------------------------------- the tower
-// Rank colours run from white-hot gold (1) to cool violet (10). They are decoration: the rank
+// Rank colors run from white-hot gold (1) to cool violet (10). They are decoration: the rank
 // itself is always written out.
 const HEAT = ['#ffd98a', '#ffbe55', '#ff9f52', '#ff8259', '#ff6f78', '#ff6fa6', '#f273cf', '#cf82f2', '#ad8cff', '#8f9cff'];
 
@@ -76,7 +76,7 @@ const PHI_END = TURNS * TAU + 1.03; // angle at which the ramp reaches the groun
 const R_MAX = 16.2; // radius of the ramp at the ground
 const DEPTH = 0.42; // the spiral is an ellipse in plan, so that the top is not far behind the front row
 const HEIGHT = 10.6; // height of the summit
-const PITCH = 4.55; // horizontal distance between neighbouring monoliths, seen from the front
+const PITCH = 4.55; // horizontal distance between neighboring monoliths, seen from the front
 const SLAB_W = 3.6;
 const SLAB_H = 5.05;
 // where each rank stands, seen from the front: 1 / 2 3 / 4 5 6 / 7 8 9 10  -> [turn of the ramp, column]
@@ -114,7 +114,7 @@ function buildOverview(ctx, { onOpen, onHover }) {
   const floor = gridFloor({ size: 150, y: -0.7, color: '#6a4a9c', opacity: 0.3, fade: 46, step: 2 });
   group.add(floor);
 
-  // ---- the ramp: a ribbon with two bright edges, coloured by height
+  // ---- the ramp: a ribbon with two bright edges, colored by height
   const N = 420;
   const phi0 = 0.9;
   const phi1 = PHI_END + 0.55;

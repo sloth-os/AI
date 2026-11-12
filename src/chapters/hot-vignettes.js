@@ -6,7 +6,7 @@
 //   VIGNETTES[viz].view          -> camera framing in the vignette's own coordinates
 //
 // A vignette is built when its issue is opened and disposed of when the visitor moves on. Scenes
-// stand on a floor at y = 0, are centred on the origin and face +z.
+// stand on a floor at y = 0, are centered on the origin and face +z.
 //
 // Honesty: every figure a scene displays is read out of the fact text in src/data/hot.js (see
 // `figure`), or is computed live. Where a scene runs a toy model, its panel says so.
@@ -583,7 +583,7 @@ function placeholder() {
 }
 
 // ---------------------------------------------------------------------------- emblems
-// Small glyphs for the monoliths (same idea as core/icons3d.js): c is the monolith's rank colour.
+// Small glyphs for the monoliths (same idea as core/icons3d.js): c is the monolith's rank color.
 const EMBLEMS = {
   containment(c) {
     const g = new THREE.Group();
