@@ -1,0 +1,54 @@
+.emb-rank {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12.2px;
+}
+.emb-rank li {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  gap: 6px;
+  align-items: baseline;
+  padding: 3px 6px;
+  border-radius: 6px;
+  color: var(--ink-2);
+}
+.emb-rank li.hit {
+  background: color-mix(in srgb, var(--good) 22%, transparent);
+  color: var(--ink);
+}
+.emb-rank li .n,
+.emb-rank li .s {
+  font: 600 10.5px var(--font-mono);
+  color: var(--ink-3);
+}
+.emb-q {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.emb-q button {
+  text-align: left;
+  padding: 6px 9px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--raise);
+  color: var(--ink-2);
+  font: 500 12.2px/1.35 var(--font-body);
+  cursor: pointer;
+}
+.emb-q button.on {
+  border-color: var(--accent);
+  color: var(--ink);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.emb-q button small {
+  font: 600 9.5px var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-right: 6px;
+}
